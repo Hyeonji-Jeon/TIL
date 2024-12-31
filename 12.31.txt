@@ -1,4 +1,5 @@
-Git Command
+**Git Command
+
 - 초기설정
 $ git init // 현재 위치에서 로컬 저장소를 생성
 $ git config -- global user.name "사용자명 " // 깃 환경에서 사용자 이름을 [사용자명]으로 지정
