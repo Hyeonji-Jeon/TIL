@@ -1,4 +1,4 @@
-**Git Command
+***  Git Command ***
 
 - 초기설정
 $ git init // 현재 위치에서 로컬 저장소를 생성
