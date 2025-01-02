@@ -1,0 +1,31 @@
+***  Git Command ***
+
+- 초기설정
+$ git init // 현재 위치에서 로컬 저장소를 생성
+$ git config -- global user.name "사용자명 " // 깃 환경에서 사용자 이름을 [사용자명]으로 지정
+$ git config -- global user.email "사용자이메일명 " // 깃 환경에서 사용자 이메일을 [사용자이메일명]으로 지정
+
+- 스테이징
+$ git add 파일명.확장자명 // [파일명.확장자명]을 스테이지에 올림
+$ git status // 상태를 확인
+$ git restore --staged 파일명 // 파일 add 취소
+$ git reset HEAD // 전체 add 취소
+
+- 커밋
+$ git commit -m "메시지명" // 커밋 메시지 [메시지명]을 붙여 커밋
+$ git commit -am "메시지명 " // 스테이징과 커밋을 동시에 진행
+
+- 이력확인
+$ git log // 전체이력 조회
+$ git show 커밋id // 특정 커밋 내역 확인
+$ git diff // modified 상태의 file과 마지막 commit 비교
+$ git diff --staged // staged 상태의 file과 마지막 commit 비교
+$ git diff 이전커밋 id 이후커밋 id // 커밋 비교
+
+- 원격저장소
+$ git remote add origin 원격저장소 주소 // 원격 저장소에 연결
+$ git push origin master // 원격 저장소의 커밋을 지역 저장소로 가져옴
+$ git clone 원격저장소 주소 // 원격 저장소 복제하기
+$ git remote remove origin // 원격저장소 삭제(끊기)
+
+
