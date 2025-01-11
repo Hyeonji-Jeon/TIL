@@ -16,7 +16,7 @@
   - [데이터 위주의 클래스](./용어정리/데이터위주의클래스.md)
 
 * Code
-  - [01.06](./01.06)
+  - [01.06](./01.06/main/java/org/example)
   - [01.07](./01.07/main/java/org/example)
   - [01.08](./01.08/main/java/org/example)
   - [01.09](./01.09/main/java/org/example)
