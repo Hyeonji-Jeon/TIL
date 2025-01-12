@@ -8,7 +8,6 @@ public class Calc1 {
         int result = x + y;
 
         return result;
-
     }
 
     public static int roll(){
@@ -17,7 +16,5 @@ public class Calc1 {
         result = (int)(Math.random() * 6) + 1;
 
         return result;
-
     }
-
 }

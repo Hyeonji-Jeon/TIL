@@ -14,10 +14,6 @@ public class Question {
     private int yesIndex;
     private int noIndex;
 
-    public Question(int num) {
-        this.num = num;
-    }
-
     public Question(int num, String text, int yesIndex, int noIndex) {
         this.num = num;
         this.text = text;
