@@ -22,7 +22,7 @@ public class Lotto2 {
             int blength = balls.length;  //루프 바깥에 선언해야 좀더 성능이 좋음
 
             for (int i = 0; i < blength; i++) {
-              balls[i] = balls[i] + 1;
+              balls[i] = i + 1;
             }
             //System.out.println(Arrays.toString(balls));
 
