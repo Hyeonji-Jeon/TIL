@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.ex.EX1;
 import org.example.menu.*;
 import org.example.store.BasicRes;
 import org.example.store.BusanRes;
@@ -9,22 +10,36 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args)throws Exception {
 
-        HashMap<String, MenuService> map = new HashMap<>();
+        List<LottoBall> ballList = new ArrayList<>();  //인터페이스 List
 
-        map.put("mega", new MegaMenuService());
-        map.put("compose", new ComposeMenuService());
+        for (int i = 1; i <= 45 ; i++) {
+            ballList.add( new LottoBall(i));
+        }
 
-        MenuService menuService = map.get("mega");
+        Collections.shuffle(ballList);
+
+        List<LottoBall> result = ballList.subList(0, 6);
+
+        System.out.println(result);
+
+
+
+
+
+
+//        HashMap<String, MenuService> map = new HashMap<>();
+//
+//        map.put("mega", new MegaMenuService());
+//        map.put("compose", new ComposeMenuService());
+//
+//        MenuService menuService = map.get("mega");
 
 
 
