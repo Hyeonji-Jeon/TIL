@@ -19,7 +19,7 @@
   - [인터페이스](./용어정리/인터페이스.md)
   - [예외처리](./용어정리/예외처리.md)
 
-* Code
+* IntelliJ
   - [01.06](./01.06/main/java/org/example)
   - [01.07](./01.07/main/java/org/example)
   - [01.08](./01.08/main/java/org/example)
@@ -34,5 +34,6 @@
  
 ## HTTP
   Hypertext Markup Language
-  
+* Eclipse
+  -[01.22](./01.22)  
     
