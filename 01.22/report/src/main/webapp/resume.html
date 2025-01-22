@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Input Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container py-5">
+        <header class="text-center mb-4">
+            <h1>이력서</h1>
+        </header>
+
+        <form>
+            <!-- Personal Information -->
+            <section class="mb-4">
+                <h2 class="text-primary">Personal Information</h2>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="name" placeholder="Enter your name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control" id="phone" placeholder="Enter your phone number" required>
+                </div>
+                <div class="mb-3">
+                    <label for="linkedin" class="form-label">LinkedIn Profile</label>
+                    <input type="url" class="form-control" id="linkedin" placeholder="Enter your LinkedIn profile URL">
+                </div>
+            </section>
+
+            <!-- Summary -->
+            <section class="mb-4">
+                <h2 class="text-primary">Summary</h2>
+                <div class="mb-3">
+                    <label for="summary" class="form-label">Professional Summary</label>
+                    <textarea class="form-control" id="summary" rows="4" placeholder="Write a brief summary about yourself"></textarea>
+                </div>
+            </section>
+
+            <!-- Experience -->
+            <section class="mb-4">
+                <h2 class="text-primary">Experience</h2>
+                <div id="experience-container">
+                    <div class="mb-3">
+                        <label for="job-title" class="form-label">Job Title</label>
+                        <input type="text" class="form-control" id="job-title" placeholder="Enter your job title">
+                    </div>
+                    <div class="mb-3">
+                        <label for="company-name" class="form-label">Company Name</label>
+                        <input type="text" class="form-control" id="company-name" placeholder="Enter the company name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="job-dates" class="form-label">Dates of Employment</label>
+                        <input type="text" class="form-control" id="job-dates" placeholder="e.g., Jan 2020 - Dec 2023">
+                    </div>
+                    <div class="mb-3">
+                        <label for="job-description" class="form-label">Description</label>
+                        <textarea class="form-control" id="job-description" rows="3" placeholder="Describe your responsibilities and achievements"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Education -->
+            <section class="mb-4">
+                <h2 class="text-primary">Education</h2>
+                <div class="mb-3">
+                    <label for="degree" class="form-label">Degree</label>
+                    <input type="text" class="form-control" id="degree" placeholder="Enter your degree">
+                </div>
+                <div class="mb-3">
+                    <label for="institution" class="form-label">Institution</label>
+                    <input type="text" class="form-control" id="institution" placeholder="Enter the institution name">
+                </div>
+                <div class="mb-3">
+                    <label for="graduation-year" class="form-label">Year of Graduation</label>
+                    <input type="text" class="form-control" id="graduation-year" placeholder="Enter your graduation year">
+                </div>
+            </section>
+
+            <!-- Skills -->
+            <section class="mb-4">
+                <h2 class="text-primary">Skills</h2>
+                <div class="mb-3">
+                    <label for="skills" class="form-label">Skills</label>
+                    <input type="text" class="form-control" id="skills" placeholder="List your skills separated by commas">
+                </div>
+            </section>
+
+            <!-- Projects -->
+            <section class="mb-4">
+                <h2 class="text-primary">Projects</h2>
+                <div class="mb-3">
+                    <label for="project-name" class="form-label">Project Name</label>
+                    <input type="text" class="form-control" id="project-name" placeholder="Enter project name">
+                </div>
+                <div class="mb-3">
+                    <label for="project-description" class="form-label">Project Description</label>
+                    <textarea class="form-control" id="project-description" rows="3" placeholder="Briefly describe the project and your role"></textarea>
+                </div>
+            </section>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Generate Resume</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
