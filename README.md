@@ -35,5 +35,6 @@
 ## HTTP
   Hypertext Markup Language
 * Eclipse
-  -[01.22](./01.22)  
+  -[01.22](./01.22) -- w1 : Hello World 출력 / day1 : 오늘의 운세 / report1 : 이력서
+  -[01.23](./01.23) -- day2 : 로또 번호 추첨 / report2 : 버거킹 키오스크
     
