@@ -39,4 +39,5 @@
 * Eclipse
   - [01.22](./01.22) -- w1 : Hello World 출력 / day1 : 오늘의 운세 / report1 : 이력서
   - [01.23](./01.23) -- day2 : 로또 번호 추첨 / report2 : 버거킹 키오스크
+  - [01.24](./01.24) -- menuList 예시, /menuDtail 조회 -> /addcart 처리 -> /cart 조회
     
