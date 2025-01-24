@@ -1,3 +1,28 @@
+Servlet - Controller 역할
+- 화면 구성은 거의 안함
+- 브라우저의 요청을 처리함 
+- 서비스(고객의 요구사항이 반영됨)를 통해서 필요한 데이터를 구성
+- 뷰로 전달하는 역할 / 제어
+
+JSP - view
+- 출력용
+- EL / JSTL
+- 복잡한 로직은 적용하지 않는다
+
+데이터 전달 / forward
+
+데이터 전달
+- 브라우저에서 서버로 데이터 전달
+GET/POSt
+
+- 서버 내부에서 데이터 전달
+RequestDispatcher
+setAttribute(이름, 값)
+
+RequestDispatcher
+: 전달자
+: 서버 내부 메신저 역할 - forward(), include() 절대 쓸일 없지만 - 레이아웃 설계에 쓰임
+
 JSP vs Servlet
 - HTML 많고 JAVA 작으면 => JSP
 - JAVA 많고 HTML 작으면 => Servlet
