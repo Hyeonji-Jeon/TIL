@@ -40,8 +40,9 @@
   - [01.22](./01.22) -- w1 : Hello World 출력 / day1 : 오늘의 운세 / report1 : 이력서
   - [01.23](./01.23) -- day2 : 로또 번호 추첨 / report2 : 버거킹 키오스크
   - [01.24](./01.24) -- menuList 예시, /menuDtail 조회 -> /addcart 처리 -> /cart 조회
-
- ## SQL
+  - [02.03](./02.03/todo) -- todolist 조회 -> todoadd 처리 -> (등록이 완료되었어요)경고창 -> todolist 조회
+ 
+ ## DB, SQL
  
 * DBeaver
-  - [02.03](./02.03)   
+  - [02.03](./02.03)   -- DB 생성, table 생성, 데이터 조작 연습(INSERT, SELECT, UPDATE, DELETE)
