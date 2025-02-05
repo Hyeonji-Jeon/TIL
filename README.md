@@ -41,8 +41,11 @@
   - [01.23](./01.23) -- day2 : 로또 번호 추첨 / report2 : 버거킹 키오스크
   - [01.24](./01.24) -- menuList 예시, /menuDtail 조회 -> /addcart 처리 -> /cart 조회
   - [02.03](./02.03/todo) -- todolist 조회 -> todoadd 처리 -> (등록이 완료되었어요)경고창 -> todolist 조회
+  - [02.04](./02.04)
  
  ## DB, SQL
  
 * DBeaver
   - [02.03](./02.03)   -- DB 생성, table 생성, 데이터 조작 연습(INSERT, SELECT, UPDATE, DELETE)
+  - [02.04](./02.04/Script.sql)  --
+  - [02.05](./02.05/Script.sql)  --
