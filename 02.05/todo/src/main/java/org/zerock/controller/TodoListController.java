@@ -1,0 +1,34 @@
+package org.zerock.controller;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+import org.zerock.dto.TodoListDTO;
+import org.zerock.service.TodoService;
+
+@WebServlet({"/todo/list"})
+public class TodoListController extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    public TodoListController() {
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String pageStr = request.getParameter("page");
+        int page = pageStr == null ? 1 : Integer.parseInt(pageStr);
+
+        try {
+            List<TodoListDTO> dtoList = TodoService.INSTANCE.getList(page);
+            request.setAttribute("dtoList", dtoList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(request.getRemoteAddr());
+        request.getRequestDispatcher("/WEB-INF/views/todo/list.jsp").forward(request, response);
+    }
+}
