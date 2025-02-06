@@ -1,0 +1,63 @@
+기획(todo) > 요구사항 분석(add, list /10, read ) > 설계(0203 excel) > 개발 > 통합 테스트 > 배포
+
+
+
+게시판 만들기 순서
+
+​ 테이블 만들기 d비버로 tbl_todo 만들자
+
+Controller > Service > DAO > DB
+
+1. 프로젝트 기본 구조 설정
+
+2. 프로젝트를 maven | gradle 로 설정하고 라이브러리(롬복, JDBC, 히카리, JSTL...) 추가하기
+
+3. 패키지 구조 및 servlet, dao, dto, service 기본 골격 구성 (여기서 이미 mvc 패턴을 만들어 두는건가? 거의 그렇다)
+
+
+
+4. 데이터 베이스 설정 및 연결 -ConnectionUtill 만들기(Hikari)
+
+5. add, list, todo dto를 설계한다
+
+6. sevice에서 dao로 연동하기
+
+7. db와 연결을 테스트하고 현재시간반환하는작업 시행
+
+
+
+8. 새로 할 일(new todo)을 db에 추가 [controller POST [/todo/add] -> service -> dao [INSERT ~~~~ ]]
+
+9. 추가 후 redirect (새로고침 시 한번더 들어가는 문제 발생할 거니까 해결!!!)
+
+
+
+10. 지정된 페이지 번호에 해당하는 할 일 목록을 db에서 조회하여 반환 (limit , offset사용)
+
+11. 테이블에 있는 전체 할 일 개수를 반환(페이징처리, count(*))
+
+TodoListController(/todo/list)에서 사용되는 서비스 2개
+
+- TodoService.INSTANCE.getList(페이지번호)
+
+```sql
+SELECT * FROM 테이블명 LIMIT 10 OFFSET 20;
+```
+
+- TodoService.INSTANCE.getTotal()
+
+```sql
+SELECT count(*) FROM 테이블명;
+```
+
+​
+
+12. 지정된 tno에 해당하는 할 일 상세정보를 db에 조회하여 반납 ->상제 정보 조회 기능
+
+TodoReadController(/todo/*)
+
+- TodoService.INSTANCE.getDetail(넘버)
+
+```sql
+SELECT * FROM 테이블명 WHERE 아이디 = 100;
+```
