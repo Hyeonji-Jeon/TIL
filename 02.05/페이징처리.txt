@@ -1,0 +1,27 @@
+페이징 처리
+
+LIMIT 숫자1 OFFSET 숫자2 
+: ANSI(표준) - Postgresql, SQLite
+
+숫자1 - 몇 개나 가져올까?
+숫자2 - 건너뛰는 숫자 (skip)
+
+서버가 죽는 원인
+
+- 연결
+: 시간 문제
+: Connection Pool 사용 - DataSource 인터페이스 정의
+: WAS(Tomcat)에 동시에 처리할 수 있는 숫자(max thread size)를 고려 (Connection Pool과 동일한 값)
+: HikariCP 사용
+
+- 느린 SQL
+: 타임아웃 세팅은 필수
+: SQL의 성능 고려 
+-- 실행 계획 사용 
+-- 다루는 데이터의 양을 줄이는 것이 가장 효과적
+-- 입출력에 사용하는 데이터 양 고려 - LIMIT
+
+- 많은 사용자
+: 로드밸런서
+-- 하드웨어 / 소프트 웨어
+-- L4 스위치
