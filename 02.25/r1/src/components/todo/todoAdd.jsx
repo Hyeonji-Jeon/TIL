@@ -7,7 +7,7 @@ function TodoAdd() {
 
         const data = {title:'React Todo Test',writer:'jhj'}
 
-        const res = await axios.post('http://122.34.51.94:8090/api/v1/todos', data)
+        const res = await axios.post('http://localhost:8090/api/v1/todos', data)
 
         console.log(res)
     }
