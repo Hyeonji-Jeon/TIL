@@ -15,7 +15,7 @@ const initState:Todo = {
 function ModifyComponent() {
 
     //현재 tno 번호
-    const {tno, moveToList, loading,setLoading, result, setResult, moveRead}  = useCustomMove()
+    const {tno, moveToList, loading,setLoading, moveRead, oper, setOper}  = useCustomMove()
 
     const [todo, setTodo] = useState<Todo>(initState)
 
@@ -29,38 +29,29 @@ function ModifyComponent() {
 
     }, [tno]);
 
-    const [oper, setOper] = useState('M')
+
 
     const handleClickDelete = ()=> {
 
         setLoading(true)
 
-        setTimeout(() => {
-
-            deleteTodo(tno).then(() => {
-                setLoading(false)
-                setOper('D')
-                setResult(true)
-            })
-        },2000)
+        deleteTodo(tno).then(() => {
+            setLoading(false)
+            setOper('D')
+        })
     }
 
     const handleClickModify = () => {
 
         setLoading(true)
 
-        setTimeout(() => {
-            updateTodo(tno, todo.title).then(() => {
-                setLoading(false)
-                setOper('M')
-                setResult(true)
-            })
-        },2000)
+        updateTodo(tno, todo.title).then(() => {
+            setLoading(false)
+            setOper('M')
+        })
     }
 
     const closeFn = () =>  {
-
-        setResult(false)
 
         if(oper === 'M') {
             moveRead(tno)
@@ -73,7 +64,7 @@ function ModifyComponent() {
     return (
         <div className="max-w-lg mx-auto p-6 bg-white shadow-lg rounded-lg">
 
-            <ResultComponent show={result} msg={oper} closeFn={closeFn}></ResultComponent>
+            {oper && <ResultComponent msg={oper} closeFn={closeFn}></ResultComponent>}
 
 
 
