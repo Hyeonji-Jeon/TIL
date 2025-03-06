@@ -84,5 +84,6 @@
 ## React + Time Script
 
   - [02.28](./02.28)  --  카운트, Todo, kiosk 예제
-  - [03.04](./03.04)  --  Axios의 활용 -  Promise 기반, Todo 예제
-  - ** 중요! 순서 잘 기억하기 ** [03.05](./03.05)  --  React Router, Todo 예제
+  - [03.04](./03.04)  --  Todo 예제, Axios의 활용 -  Promise 기반 
+  - ** 중요! 순서 잘 기억하기 ** [03.05](./03.05)  --  Todo 예제 React Router
+  - [03.06](./03.06)  --  Todo 예제, 커스텀 훅, 모달창
