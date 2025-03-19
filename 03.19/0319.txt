@@ -1,0 +1,54 @@
+0319
+
+STS 를 이용한 스프링 레거시 프로젝트 
+
+Dynamic Web Project 생성 -  Market Place에서 Enterprise Web Dev... 다운로드 설치 
+
+톰캣 설정
+
+JDK 환경 조정
+
+C:\Users\hyeon\.jdks\corretto-17.0.13\bin\java -jar lombok.jar
+
+Lombok 설정  - Eclipse는 Lombok을 설치, 프로젝트에 Lombok 추가(Maven)
+
+spring-core, context, webmvc, test
+
+로그세팅 log4j2
+
+컨트롤러의 리턴 타입 
+
+void - 호출하는 경로 자체가 jsp의 경로와 이름이 됨 - 항상 동일한 결과를 제공
+
+String -  특정한 jsp의 경로와 이름을 지정하려고 할 때 
+
+         -  redirect: 로 시작해서 리다이렉션 처리 (PRG) - 주로 POST처리후 강제이동
+
+ResponseEntity - 상태 코드 직접 제어할때 HTTP헤더 제어 
+
+컨트롤러의 파라미터 
+
+( ) 
+
+DTO/VO -> 자동으로 setXXX( )해서 수집 - request.getParameter("") 1도 필요없음 
+
+기본자료형 수집 -> 문자열 -> Integer.parseInt( ) -> 필요없음 
+
+Model이라는 특별한 파라미터 - 데이터를 JSP로 전달하는 용도 
+
+addAttribute( ) - 
+
+
+필요한 JS 라이브러리를 개발자가 만드는 JS 코드 이전에 초기화 시키는 방법
+header.jsp에 포함 
+
+단점 - JS라이브러리가 해석하는 동안 화면 렌더링이 지연된다. 
+장점 - 코딩이 편하다
+
+footer.jsp 후에 <script>태그를 이용하는 방법 
+
+장점 -  화면 먼저 처리되고 라이브러리 초기화 확실 
+
+단점 -  코드가 지저분 
+
+
