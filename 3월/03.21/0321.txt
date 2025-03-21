@@ -1,0 +1,51 @@
+0321
+
+BoardDTO
+
+BoardMapper
+
+테스트 코드
+
+-----------------------------
+
+BoardController
+
+페이징, 검색을 위해서 PageRequestDTO
+
+리스트 처리 
+(1) : 페이지와 검색 조건만 정상적으로 수집되는지 확인
+
+--------------------------------
+
+PageResponseDTO 를 제작 - 리스트에 필요한 모든 데이터를 묶어둔 DTO
+
+BoardService, BoardServiceImpl 제작
+
+BoardMapper 의존성 주입
+
+----------------------------------
+
+BoardController 에서 BoardService를 주입하고 결과 확인
+
+화면 개발
+
+
+=======================================
+
+AOP
+공통 기능을 분리해서 원하는 객체와 결합
+
+결합된 객체를 Proxy객체
+
+비즈니스 로직은 아니지만 공통적으로 필요한 기능들 - Aspect, Advice
+
+ProceedingJoinPoint
+
+- 실행하려고 하는 객체(target)
+
+- 메서드를 파악 가능
+
+- 주어진 파라미터들을 확인 가능
+
+- proceed( )를 통해서 실행 가능
+
