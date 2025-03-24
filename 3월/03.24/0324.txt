@@ -1,0 +1,110 @@
+0324
+
+AOP - 공통 로직( Cross Concern ) - 로그/트랜잭션 
+
+AOP에서 사용하는 용어 
+
+Aspect (공통로직- 추상명사)
+
+Advice (실제 구현체)
+
+JoinPoint (대상의 메소드) 
+
+Pointcut (어떤 조인 포인트에 결합할 것인가)
+
+Target (대상)
+
+Advisor - Advice(실행될 코드)**와 **Pointcut(적용 대상과 시점) 
+
+
+트랜잭션 의미, 설정 (서비스계층에서 반드시 트랜잭션을 처리) 
+
+-ACID 원칙 (All or Nothing)  
+
+서비스 계층 - 고객의 용어로 비지니스 로직을 호출하는 계층 - 잘못되는 상황 - 예외를 던지는 계층 
+
+예외 설계하고 컨트롤러에서 예외에 따라 다른 화면을 처리 
+
+@ControllerAdvice
+
+-----------------------------------
+
+댓글 - REST 서비스 
+
+반정규화/인덱스 고려 
+
+@RestController
+
+@RestControllerAdvice
+
+
+create table tbl_reply (
+	rno int auto_increment primary key,
+	bno int not null,
+	replyText varchar(1000) not null,
+	replyer varchar(50) not null,
+	replyDate timestamp default now(),
+	updateDate timestamp default now()
+);
+
+alter table tbl_reply 
+add constraint fk_reply_board 
+foreign key (bno)
+references tbl_board(bno)
+;
+
+alter table tbl_board add column replyCnt int default 0;
+
+create index idx_reply_board on tbl_reply(bno desc, rno asc);
+
+select * from tbl_board;
+
+ReplyMapper , 테스트 
+
+@RequestBody JSON데이터를 객체로 변환하겠다는 표시 
+
+댓글 추가 - POST 방식 
+
+브라우저에서 network를 이용해서 payload로 JSON 데이터가 전달되는지 확인 
+
+댓글을 추가한 후에 작업 
+
+1.성공/실패 알려주고 브라우저에서 다시 마지막 페이지를 호출하는 방법 - 서버와 2번 호출
+
+
+
+2.성공하면 무조건 마지막 댓글 페이지 데이터 전송하고 실패하면 에러 코드 전송  - 서버 1번 호출 
+
+DB에 insert가 성공한 후에 해당 bno에 속하는 댓글의 숫자를 먼저 파악 - 1
+
+select count(rno) from tbl_reply where bno = 1048551
+//89개 -- 댓글의 페이지 번호 출력 1,...9페이지 출력 
+
+
+댓글의 숫자를 이용해서 마지막 페이지 번호를 구하고 - 2
+
+10.0 나눈후에 올림 
+
+몇 개나 건너뛰어야만 최신 데이터가 나오는지 확인이 가능 
+
+select (floor(count((rno)-1)/10)* 10) from tbl_reply where bno = 1048551
+//80 
+
+
+
+limit 와 offset을 이용해서 댓글 목록을 가져와야 함 - 3
+
+select * from tbl_reply 
+where bno  = 1048551
+order by rno asc 
+limit 10 offset 80
+;
+
+결과 데이터는 PageResponseDTO타입으로 반환 -4
+
+
+<dependency>
+    <groupId>com.fasterxml.jackson.datatype</groupId>
+    <artifactId>jackson-datatype-jsr310</artifactId>
+    <version>2.15.0</version> <!-- 사용 중인 Jackson 버전에 맞게 변경 -->
+</dependency>

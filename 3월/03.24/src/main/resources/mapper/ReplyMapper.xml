@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zerock.reply.mapper.ReplyMapper">
+
+	<insert id="add">
+	insert into tbl_reply (bno, replyText , replyer)
+	values (#{bno}, #{replyText}, #{replyer})
+	</insert>
+	
+	<select id="countOfBno" resultType="int">
+	select count(rno) from tbl_reply where bno = #{bno}
+	</select>
+	
+	<select id="calcSkip" resultType="int">
+	select (floor((count(rno)-1)/10)* 10) from tbl_reply where bno = #{bno}
+	</select>
+
+	<select id="selectBno" resultType="ReplyDTO">
+	select * from tbl_reply 
+	where bno  = #{bno}
+	order by rno asc 
+	limit 10 offset #{skip}
+	</select>	
+	
+
+</mapper>        
+
+
+
