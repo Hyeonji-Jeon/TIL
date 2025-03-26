@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="org.zerock.product.mapper.ProductMapper">
+
+<resultMap type="ProductDTO" id="productMap">
+	<id property="pno" column="pno"/>
+	<result property="pname" column="pname"/>
+	<result property="price" column="price"/>
+	<result property="pdesc" column="pdesc"/>
+	<result property="regDate" column="regDate"/>
+	<collection property="fileNames" ofType="string">
+		<result column="fileName"/>
+	</collection>
+</resultMap>
+
+
+<insert id="insertProduct" useGeneratedKeys="true" keyProperty="pno">
+
+insert into tbl_product (pname,pdesc,price)
+values (#{pname}, #{pdesc}, #{price})
+
+</insert>
+
+<insert id="insertImgs">
+
+insert into tbl_product_img (filename,pno, ord)
+values
+
+	<foreach collection="fileNames" index="idx" separator="," item="fname">
+	(#{fname}, #{pno}, #{idx} )
+	</foreach>
+
+</insert>
+
+<select id="list" resultType="ProductListDTO">
+select * 
+from 
+	tbl_product p 
+	left outer join tbl_product_img pi on pi.pno = p.pno
+where pi.ord = 0
+order by p.pno desc
+limit #{limit} offset #{offset}
+</select>
+
+<select id="listCount" resultType="int">
+select count(*) from tbl_product
+</select>
+
+
+<select id="selectOne" resultMap="productMap" >
+select * 
+from 
+	tbl_product p 
+	left outer join tbl_product_img pi on pi.pno = p.pno
+where 
+    p.pno = #{pno} and pi.ord >= 0
+order by pi.ord asc
+</select>
+
+</mapper>
+
+
+
+
+
+
+
