@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zerock.reply.mapper.ReplyMapper">
+
+	<insert id="add">
+	insert into tbl_reply (bno, replyText , replyer)
+	values (#{bno}, #{replyText}, #{replyer})
+	</insert>
+	
+	<select id="countOfBno" resultType="int">
+	select count(rno) from tbl_reply where bno = #{bno}
+	</select>
+
+
+	<select id="selectBno" resultType="ReplyDTO">
+	select * from tbl_reply 
+	where bno  = #{bno}
+	order by rno asc 
+	limit 10 offset #{skip}
+	</select>	
+	
+	<select id="selectList" resultType="ReplyDTO">
+	select * from tbl_reply 
+	where bno  = #{bno}
+	order by rno asc 
+	limit #{requestDTO.size} offset #{requestDTO.offset}
+	</select>	
+	
+	<select id="selectOne" resultType="ReplyDTO">
+	select * from tbl_reply where rno = #{rno}
+	</select>
+	
+	<update id="updateOne">
+	update tbl_reply set replyText = #{replyText}, updateDate = now() where rno = #{rno} 
+	
+	</update>
+	
+
+</mapper>        
+
+
+
