@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.zerock.member.mapper.MemberMapper">
+
+	<insert id="insert">
+	insert into tbl_member (mid,mpw,mname,email) 
+	values ( #{mid},#{mpw},#{mname},#{email})
+	</insert>
+	
+	<insert id="insertRoles">
+
+	insert into tbl_member_role (mid,rolename)
+	values
+		<foreach collection="roleNames" separator="," item="roleName">
+		(#{mid}, #{roleName} )
+		</foreach>
+	
+	</insert>
+	
+	<resultMap type="MemberDTO" id="memberMap">
+		<id property="mid" column="mid"/>
+		<result property="mpw" column="mpw"/>
+		<result property="mname" column="mname"/>
+		<result property="email" column="email"/>
+		<result property="regDate" column="regDate"/>
+		<result property="modDate" column="modDate"/>
+		<collection property="roleNames" ofType="string">
+			<result column="rolename"/>
+		</collection>
+	</resultMap>
+	
+	<select id="selectByMid" resultMap="memberMap">
+	select 
+	 * 
+	from 
+		tbl_member m left outer join tbl_member_role mr 
+		on mr.mid = m.mid 
+	where m.mid = #{mid}
+	</select>
+
+</mapper>  
+
+
+
+
+
+
+
+
+
+      
