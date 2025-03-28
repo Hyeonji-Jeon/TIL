@@ -103,4 +103,6 @@
   - [03.25](./3월/03.25)  --  댓글 페이징처리, 대댓글, 파일 업로드, @RequestBody의 의미
   - [03.26](./3월/03.26)  --  파일 업로드, product 예제, 파일 수정/삭제, hidden
   - [03.27](./3월/03.27)  --  Spring security, 인증(Authentication), 인가(Authorization), Bad Credentials 해결
+  - [03.28](./3월/03.28)  --  사용자 정보를 DB에서 처리, Remember Me - 서버 재시작해도 DB에서 정보를 보관하도록 변경, 커스텀 로그인 페이지, 로그인 성공/실패, Access Denied 핸들러 (처리)
+
 
