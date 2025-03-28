@@ -102,4 +102,5 @@
   - [03.24](./3월/03.24)  --  게시글과 댓글 테이블의 관계(테이블 생성, 제약조건, 반 정규화, 인덱스) / Rest, Restful의 의미 / @RestControlelr의 역할 / 댓글 동작 원리 - 등록 / PathVariable 사용법
   - [03.25](./3월/03.25)  --  댓글 페이징처리, 대댓글, 파일 업로드, @RequestBody의 의미
   - [03.26](./3월/03.26)  --  파일 업로드, product 예제, 파일 수정/삭제, hidden
+  - [03.27](./3월/03.27)  --  Spring security, 인증(Authentication), 인가(Authorization), Bad Credentials 해결
 
