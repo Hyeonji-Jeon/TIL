@@ -105,4 +105,7 @@
   - [03.27](./3월/03.27)  --  Spring security, 인증(Authentication), 인가(Authorization), Bad Credentials 해결
   - [03.28](./3월/03.28)  --  사용자 정보를 DB에서 처리, Remember Me - 서버 재시작해도 DB에서 정보를 보관하도록 변경, 커스텀 로그인 페이지, 로그인 성공/실패, Access Denied 핸들러 (처리)
 
+## SpringBoot (VS Code)
+
+  - [03.31](./3월/03.31)  --  todo 예제
 
