@@ -1,0 +1,13 @@
+CREATE DATABASE bootdb;
+
+
+CREATE USER 'bootdbuser'@'localhost' IDENTIFIED BY 'bootdbuser';
+
+
+CREATE USER 'bootdbuser'@'%' IDENTIFIED BY 'bootdbuser';
+
+
+GRANT ALL PRIVILEGES ON bootdb.* TO 'bootdbuser'@'localhost';
+
+
+GRANT ALL PRIVILEGES ON bootdb.* TO 'bootdbuser'@'%';
