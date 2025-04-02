@@ -1,0 +1,16 @@
+0402
+
+
+bno값을 가지는 BoardEntity 객체를 하나 생성해서 사용
+
+연관관계는 무조건 Lazy loading만 이용할 것
+
+@ToString (exclude) 사용해야 불필요한 select를 실행하지 않음
+
+특정한 게시글에 속하는 댓글들을 조회 (시간 순서대로) - 검색 제외
+
+Querydsl - 동적 쿼리 만들 때 
+
+페이징 처리 필요함
+
+파라미터가 Pageable이면 리턴타입은 Page
