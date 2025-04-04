@@ -1,0 +1,11 @@
+<DROP TABLE>
+
+DROP TABLE bootdb.tbl_product_img CASCADE;
+
+DROP TABLE bootdb.tbl_product CASCADE;
+
+DROP TABLE bootdb.tbl_reply CASCADE;
+
+DROP TABLE bootdb.tbl_board CASCADE;
+
+DROP TABLE bootdb.tbl_todo CASCADE;
