@@ -1,0 +1,96 @@
+0407
+
+N + 1 문제와 ElementCollection 
+
+하나의 엔티티가 하위에 다른 엔티티나 값 객체를 물고 있는 상황 
+
+리스트 쿼리 한번 +  각 상품당 다시 쿼리가 실행되는 증상 
+
+FetchType.EAGER로 해도 동일한 증상 
+
+FetchType은 항상 LAZY타입만 사용 
+
+fetch join은 페이징 처리가 되지 않음 - 성능면으로 문제가 있음 
+
+@BatchSize를 사용하는게 현실적
+
+------------------------------------------------------------------
+
+한번에 DTO 처리가 안되므로 중간단계인 Tuple 을 거쳐야만 함 
+
+상품 수정/삭제 
+
+
+@OneToMany는 @ElementCollection과 유사하게 코드를 만든다고 
+
+One에 해당하는 엔티티를 중심으로 코드를 작성한다 
+
+양방향으로 하게 되면 양쪽모두 참조 관계를 신경써야 하기 때문에 
+
+mappedBy 
+
+영속상태 전이(propagation) 
+
+
+고객의 주문 기록 중에 최신 10개를 가져온다. 
+
+문제는 주문 하나에 여러 개의 주문 상세가 존재한다. - 20,30,40 모른다는 문제
+
+JPA로 처리는 가능했지만 문제는 성능
+
+
+select
+    oe1_0.ono,
+    oe1_0.customer,
+    d1_0.order_ono,
+    d1_0.odno,
+    p1_0.pno,
+    p1_0.pname,
+    p1_0.price,
+    d1_0.quantity
+from
+    tbl_order oe1_0
+        left join
+    tbl_order_detail d1_0
+    on oe1_0.ono=d1_0.order_ono
+        left join
+    tbl_product p1_0
+    on p1_0.pno=d1_0.product_pno
+where
+    oe1_0.customer='user01'
+order by
+    oe1_0.ono desc
+
+-------------------------------------------------
+
+1st 
+
+페이징 처리 대상 - 주문 번호 - 사용자가 주문한 주문 번호 10개만 가져오는 쿼리 
+
+10건에 대해서는 무조건(페이징 처리 없음) 주문 상세와 상품을 가져와야해 
+
+양방향 삭제 
+
+42번 삭제를 하려면 
+
+42번의 주문에 가서 본인을 삭제하라고 얘기해줘야만 함 - 주문 엔티티를 저장 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
