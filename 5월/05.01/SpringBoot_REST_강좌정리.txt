@@ -1,0 +1,1339 @@
+
+REST 강좌정리
+
+1. REST 개요
+
+- 웹브라우저 뿐만 아니라 핸드폰 테블릿 ... 다 가능
+
+   - REpresentational State Transfer  ( 표현 상태 전송 )
+   - 웹 어플리케이션 개발 방법론의 하나로서 클라이언트(웹브라우저, 핸드폰, 테블릿, 셋탑박스,..)와 서버간의 상태정보를 표현하는 방법임.
+   - 이전 방식의 웹어플리케이션 방법은 SOAP(Service Oriented Application Programming) 방법론임.
+
+
+   1) SOAP 방식
+	                요청
+	클라이언트 --------------------------> 서버
+       (웹브라우저)                            (JSP, Thymeleaf 등) 
+	      <--------------------------
+	                html
+
+      ==> 2차 미니 프로젝트 아키텍쳐
+
+
+   2) REST 방식
+
+                        요청(XML/JSON)
+	클라이언트 --------------------------> 서버
+       (웹브라우저
+        모바일,TV,
+	자동차,..
+        )                           
+	      <--------------------------
+	                응답(XML/JSON)
+
+
+    * 최종 프로젝트 아키텍쳐
+
+       
+                        요청(XML/JSON)
+	클라이언트 --------------------------> 서버 (SpringBoot)
+       (웹브라우저,
+        모바일
+	=>Reactjs
+        )                           
+	      <--------------------------
+	                응답(XML/JSON)
+
+
+ 2. REST 특징
+
+   1) 클라이언트 요청 방식
+
+      가. SOAP 방식
+
+	  GET  방식: 조회시 주로 사용. ( SELECT 시)
+	  POST 방식: 생성,수정,삭제 주로 사용 ( INSERT, UPDATE, DELETE 시)
+
+       ==> html의 form 태그에서 지원하는 방법은 method=GET|POST만 가능.
+
+      나. REST 방식
+ 
+          GET 방식:  조회시 사용   ( SELECT 시)
+	           @GetMapping 이용
+	  POST 방식: 생성시 사용   ( INSERT 시)
+		   @PostMapping 이용
+		   header값 필수: Content-Type: application/json	// 꼭 넣어줘야돼
+	  PUT ( PATCH ) 방식:  수정시 사용   ( UPDATE 시)
+	           @PutMapping 이용
+		    header값 필수: Content-Type: application/json	// 꼭 넣어줘야돼
+	  DELETE 방식: 삭제시 사용 ( DELETE 시)
+	           @DeleteMapping 이용
+
+
+       ==> PUT과 DELETE 까지 요청가능한 도구(tool)이 필요함
+          예> curl ( client url, 텍스트 기반, Linux 등에서 많이 사용됨 )
+	     postman, Talend API ( GUI 기반 )
+
+  //////////////////////////////////////////////////////////////////
+     * 맵핑요청시 사용하는 권장 방법 ( 엔드포인트(end-point) 값이라고 부른다. )	// REST 엔트포인트 가이드 참고
+		     // 요청매핑값
+       GET 요청: /rest/users       <== 모든 users 정보 조회
+       GET 요청: /rest/users/username       <== 모든 users 정보중에서 username 값만 조회
+       GET 요청: /rest/users/:id    <==  id에 해당되는 users 정보 조회
+
+       POST 요청: /rest/users
+                추가로 실제 저장할 데이터 지정: { "id":40, "username":"강감찬", birthdate:"2025-12-21"}
+		추가로 header 정보 설정:  Content-type: application/json 
+ 
+       PUT  요청: /rest/users/:id    <==  id에 해당되는 users 정보 조회
+		추가로 실제 수정할 데이터 지정: { "username":"강감찬", birthdate:"2025-12-21"}
+		추가로 header 정보 설정:    Content-type: application/json 
+
+
+       DELETE 요청: /rest/users/:id  <==  id에 해당되는 user 삭제 
+  //////////////////////////////////////////////////////////////////
+
+
+
+   2) Controller 
+
+        가. SOAP 방식
+
+	     @Controller
+	     public class MainController{
+
+	         //JSP 응답
+		 @GetMapping("/jsp")
+		 public String xxx(){
+
+                     return "hello"; // hello.jsp
+		 }
+
+		 //JSON 응답
+		 @GetMapping("/json")
+		 @ResponseBody
+		 public String yyy(){
+
+                     return "hello"; 
+		 }
+	     }
+
+
+	 나. REST 방식
+
+	    @Controller
+	     public class MainController{
+
+	         //JSON 응답
+		 @GetMapping("/json1")
+		 @ResponseBody
+		 public String xxx(){
+
+                     return "hello"; 
+		 }
+
+		 //JSON 응답
+		 @GetMapping("/json2")
+		 @ResponseBody
+		 public String yyy(){
+
+                     return "hello"; 
+		 }
+	     }
+
+          ==> 간결하게 구현 가능 :   @Controller  +  @ResponseBody ==> @RestController
+
+		
+            @RestController
+	     public class MainController{
+
+	         //JSON 응답
+		 @GetMapping("/json1")
+		 public String xxx(){
+
+                     return "hello"; 	// 모델로 처리
+		 }
+
+		 //JSON 응답
+		 @GetMapping("/json2")
+		 public String yyy(){
+
+                     return "hello"; 
+		 }
+	     }
+
+     3) 클라이언트에서 서버에 파라미터 전달
+       
+         -  SOAP는 URL이 아닌 Query String를 이용해서 데이터를 전달한다.
+	    REST는 URL를 이용해서 데이터를 전달한다.
+
+           가. SOAP 방식
+	      - 만약 userid에 해당하는 1 값을 전달하고자 한다면 Query String을 주로 이용한다.	
+               
+	       http://localhost:8090/app/member?userid=1
+	       http://localhost:8090/app/member?userid=2
+
+              URL?  http://localhost:8090/app/member
+
+	      - Controller 에서 @RequestParam 이용해서 값을 얻음.
+
+	   나. REST 방식
+	     - 만약 userid에 해당하는 1 값을 전달하고자 한다면
+
+	       http://localhost:8090/app/member/1
+	       http://localhost:8090/app/member/2
+
+              URL?  http://localhost:8090/app/member/1
+  	            http://localhost:8090/app/member/2
+
+		    http://localhost:8090/app/member/값
+
+	    - Controller 에서 @PathVariable 이용해서 값을 얻음.
+
+3. REST 실습
+  
+   1) pom.xml
+
+        <dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-web</artifactId>
+	</dependency>
+ 	 <dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-devtools</artifactId>
+		<scope>runtime</scope>
+		<optional>true</optional>
+	 </dependency>
+
+   2) application.properties
+    
+        # 로그레벨 수정
+	#logging.level.root=info
+
+	#logging.level.org.springframework=info
+	logging.level.com.exam=info
+
+	# tomcat port 번호 변경
+	server.port=8090
+
+	# context명 변경
+	server.servlet.context-path=/app
+
+
+4.  lombok 라이브러리
+
+   - DTO 작성시 생성자, getter/setter 메서드, toString 메서드 등을 자동으로 제공함.
+   - 구현 방법
+
+    1) lombok 라이브러리 다운로드
+     
+       https://projectlombok.org/download  에서 lombok.jar 다운
+
+    2) pom.xml 의존성 설정
+       https://mvnrepository.com/ 에서 lombok 검색.
+
+          <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+	<dependency>
+	    <groupId>org.projectlombok</groupId>
+	    <artifactId>lombok</artifactId>
+	</dependency>
+
+
+    3) C:\Users\ssginc73 에 붙여넣고 실행하기 ( 실행중인 STS에게 lombok 설정)
+
+        cmd창 열고 lombok.jar 실행
+
+	java -jar lombok.jar
+
+	specify location.. 선택하고 C:\springboot3_study\sts-4.27.0.RELEASE\SpringToolSuite4.exe 선택.
+
+	install/update 버튼 클릭.
+
+	install successful.. > Quit Installer 클릭
+
+	STS 다시 시작
+
+	maven > update project 클릭.
+
+       
+    4) DTO 작성
+
+        @AllArgsConstructor    // 파라미터 있는 생성자
+	@NoArgsConstructor     // 기본 생성자
+	@Setter                // setter 메서드 
+	@Getter                // getter 메서드
+	@ToString              // toString 메서드
+	@Slf4j                 // Logger 기능 제공.   log.info() 
+	public class UserDTO {
+
+		String username;
+		int age;
+		String address;
+		
+		
+	}
+
+     5) 빌더 패턴 ( Builder 패턴 )
+
+        - DTO 생성시 사용되는 패턴임.
+
+	예>
+	   
+		@Builder
+		@Getter
+		public class UserDTO2 {
+
+			String username;
+			int age;
+			String address;
+			
+			
+		}
+
+		// 3. 빌더 패턴 (*************************)
+		
+		UserDTO2 dto = UserDTO2.builder()
+				   .username("홍길동")
+				   .age(20)
+				   .address("서울")
+			       	   .build();
+		=> 어디에 뭐 들어가는지 알기 쉬움.
+		
+
+		// 전통적인 생성방식
+		UserDTO2 dto = new UserDTO2( "홍길동", 20 "서울" ) ;	
+		=> 어디에 뭐 들어가는지 모름. 불편.
+
+
+ 5. REST + MyBatis + MySQL
+
+   1) 의존성
+
+      <dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+ 	 <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+	 </dependency>
+	 <dependency>
+	    <groupId>org.projectlombok</groupId>
+	    <artifactId>lombok</artifactId>
+	</dependency>
+	<dependency>
+	    <groupId>org.mybatis.spring.boot</groupId>
+	    <artifactId>mybatis-spring-boot-starter</artifactId>
+	    <version>3.0.3</version>
+	</dependency>
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+	<dependency>
+		    <groupId>mysql</groupId>
+		    <artifactId>mysql-connector-java</artifactId>
+		    <version>8.0.33</version>
+	</dependency>
+
+   2) application.properties 4가지 정보 설정
+    
+        # 로그레벨 수정
+	#logging.level.root=info
+
+	#logging.level.org.springframework=info
+	logging.level.com.exam=info
+
+	# tomcat port 번호 변경
+	server.port=8090
+
+	# context명 변경
+	server.servlet.context-path=/app
+
+	# DB 연동
+	spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+	spring.datasource.url=jdbc:mysql://localhost:3306/testdb
+	spring.datasource.username=root
+	spring.datasource.password=1234
+	# DeptMapper 등록
+	mybatis.mapper-locations=com/exam/config/*Mapper.xml
+	# DTO 별칭
+	mybatis.type-aliases-package=com.exam.dto
+
+	#  SQL의 컬럼명: target_date   ,  DTO 변수명: targetDate  인 경우
+	#  별칭 또는 resultMap 으로 명시적으로 설정해서 사용했음.
+	#  이 작업을 자동으로 할 수 있다.
+	mybatis.configuration.map-underscore-to-camel-case=true
+
+	# // /** 설정시 적용
+	spring.mvc.pathmatch.matching-strategy=ant-path-matcher
+
+	# LocatDate 사용시 날짜 포맷 지정. 4자리년도-2자리월-2자일 예> 2025-05-23
+	spring.mvc.format.date=yyyy-MM-dd
+
+    3) 테이블 작성
+
+       use testdb;
+
+       drop table if exists user;
+
+       create table user( 
+	   id int primary key,
+	   username varchar(20) not null,
+	   birthdate date
+       );
+
+       insert into user ( id, username, birthdate ) values ( 10, '홍길동', current_date() );
+       insert into user ( id, username, birthdate ) values ( 20, '이순신', current_date() );
+       insert into user ( id, username, birthdate ) values ( 30, '유관순', current_date() );
+       commit;
+
+      
+    4) UserDTO.java 작성
+
+        @AllArgsConstructor
+	@NoArgsConstructor
+	@Setter
+	@Getter
+	@ToString
+	@Alias("UserDTO")
+	public class UserDTO {
+
+		 int id;
+		 String username;
+		 LocalDate birthdate;
+		 
+	}
+
+
+   5) com.exam.mapper.UserMapper.xml  와  com.exam.mapper.UserMapper.java
+
+       <mapper namespace="com.exam.mapper.UserMapper">
+	   
+	   <select id="findAll" resultType="UserDTO">
+	       select id, username, birthdate
+	       from user
+	       order by id
+	   </select>
+		 
+	</mapper>
+
+	@Mapper
+	public interface UserMapper {
+
+		public List<UserDTO> findAll();
+	}
+
+    6) com.exam.service.UserService.java 와  com.exam.service.UserServiceImpl.java
+
+        public interface UserService {
+
+		public List<UserDTO> findAll();
+	}
+
+	@Service
+	public class UserServiceImpl implements UserService {
+
+		UserMapper mapper;
+		
+		public UserServiceImpl(UserMapper mapper) {
+			this.mapper = mapper;
+		}
+
+		@Override
+		public List<UserDTO> findAll() {
+			return mapper.findAll();
+		}
+
+	}
+
+     7) UserController.java  
+
+      package com.exam.controller;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.exam.dto.UserDTO;
+import com.exam.service.UserService;
+
+import lombok.extern.slf4j.Slf4j;
+
+@RestController  // @Controller + @ResponseBody
+@Slf4j
+public class UserController {
+
+	UserService service;
+	
+	public UserController(UserService service) {
+		this.service = service;
+	}
+
+	//  GET  http://localhost:8090/app/rest/users
+	@GetMapping("/rest/users")
+	public List<UserDTO> findAll(){
+		return service.findAll();
+	}
+
+	// GET  http://localhost:8090/app/rest/users/10
+	//  존재하지 않는 값 요청시 404 에러가 아닌 200 반환됨. ==>  나중에 404로 변경할 예정임.
+	@GetMapping("/rest/users/{id}")
+	public UserDTO findById(@PathVariable Long id) {
+		return service.findById(id);
+	}
+	
+	//POST ( 저장 )
+	/*
+	    추가로 실제 저장할 데이터 지정: { "id":40, "username":"강감찬", "birthdate":"2025-12-21"}
+		추가로 header 정보 설정:  Content-type: application/json
+		
+		저장이 성공하면 200 반환됨.  ==> 나중에 201 ( created 상태값 ) 로 변경할 예정임.
+	 */
+
+	@PostMapping("/rest/users")
+	public void save(@RequestBody UserDTO dto) {
+		int n = service.save(dto);
+	}
+	
+	// PUT ( 수정 )
+	/*
+	   where 절에 필요한 id는 PathVariable로 전달하고
+	   수정할 데이터인 username 과 birthdate 는 {"username":"강감찬2", "birthdate":"2025-12-21"} 전달한다.
+	   추가로 header 정보 설정:  Content-type: application/json
+	*/
+	@PutMapping("/rest/users/{id}")
+	public void update(@PathVariable Long id, @RequestBody UserDTO dto) {
+		dto.setId(id);
+		int n = service.update(dto);
+	}
+	
+	// DELETE ( 삭제 )
+	@DeleteMapping("/rest/users/{id}")
+	public void delete(@PathVariable Long id) {
+		int n = service.delete(id);
+	}
+    }
+ 
+   지금까지 코드가 가장 기본이되는 REST 코드임.
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+  6.  POST 요청 처리에 대한 응답처리 개선하기 
+
+      -현재는 DB에 저장이되고 클라이언트에게  200 상태코드값을 반환됨.
+       그런데 200 상태코드는 GET|PUT|DELETE 요청할 때도 반환되는 상태값이다.
+       따라서 POST 요청에 한정된 201 상태값으로 반환할 필요가 있음.
+
+   
+     1) 제대로 된 status code(201) 값을 반환하자.
+
+         //////////////////////////////////////////////////////////////////
+	   200:  OK (성공)
+	   201:  created      ( 요청이 성공되어 새로운 리소스가 생성되었음을 의미 )
+	   204:  no content   ( 요청에 대한 컨텐츠가 없을 때  예> PUT 했는데 id에 해당되는 레코드가 없을 때 )
+
+	   400:  bad request  ( 잘못된 문법으로 인해서 서버가 이해할 수 없음을 의미 )
+	   401:  unauthorized ( 엄밀히 말해서 미권한(unauthorized)이 아닌 미인증(unauthenticated) 임.
+	                         즉 인증작업이 필요한 상황에서 인증작업을 거치지 않았을 때 발생됨.
+	                        )
+
+	      authentication:  인증
+
+	      authorization:   권한
+
+           403: Forbidden     ( 요청할 권한이 없는 경우에 발생 )
+	   404: Not Found
+	   405: Method Not Allowd ( 예> GET 요청시 doPost 받을 때 )
+
+
+	   500: Internal Server Error ( 서버 오류 )
+	//////////////////////////////////////////////////////////////////
+  
+      - Controller에서 리턴타입을  ResponseEntity API 이용
+
+           	// POST 요청에 대한 응답처리 개선1 - 201 status code설정
+		@PostMapping("/rest/users2")
+		public ResponseEntity<UserDTO> save2(@RequestBody UserDTO dto) {
+			//int n = service.save(dto);
+			ResponseEntity<UserDTO> entity = ResponseEntity.created(null).build(); // 201 상태코드 
+	//		entity = ResponseEntity.badRequest().build();   // 400 상태코드
+	//		entity = ResponseEntity.notFound().build();   // 404 상태코드
+	//		entity = ResponseEntity.noContent().build();   // 204 상태코드
+	//		entity = ResponseEntity.internalServerError().build();   // 500 상태코드
+			// 메서드가 제공되지 않는 경우는 status(상태값) 이용
+	//		entity = ResponseEntity.status(401).build();   // 401 상태코드
+			return entity;
+		}
+
+
+     2) status code(201) +  새로 생성된 사용자 정보 링크  을 반환하자.
+
+       - 만약에  { "id":60, "username":"강감찬", "birthdate":"2025-12-21"} 정보를 저장하고
+         마지막으로 사용자에게  201 +  http://localhost:8090/app/rest/users/60  링크 정보를 제공하자.
+
+	
+
+       - 구현방법
+        
+	  // http://localhost:8090/app/rest/users/60
+	URI location = ServletUriComponentsBuilder.fromCurrentRequest()  // http://localhost:8090/app/rest/users/
+						  .path("/{id}")  //  dto.getId() 값으로 치환됨.
+						  .buildAndExpand(dto.getId())
+						  .toUri();
+          ResponseEntity<UserDTO> entity = ResponseEntity.created(location).build()
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ 7.  요청한 값이 존재하지 않을 때 응답처리 개선하기
+ 
+   - 현재 상황은 다음과 같다.
+
+        // GET  http://localhost:8090/app/rest/users/10
+	//  존재하지 않는 값 요청시 404 에러가 아닌 200 반환됨. ==>  나중에 404로 변경할 예정임.
+	@GetMapping("/rest/users/{id}")
+	public UserDTO findById(@PathVariable Long id) {
+		return service.findById(id);
+	}
+
+
+   - 404 응답처리로 개선1 - ResponseEntity.notFound().build() 이용
+
+	@GetMapping("/rest/users/{id}")
+	public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
+		
+		UserDTO dto = service.findById(id);
+		if(dto != null) {
+			
+			return ResponseEntity.status(200).build();
+			
+		}else {
+			
+//			return ResponseEntity.status(404).build();
+			return ResponseEntity.notFound().build();
+		}
+	}
+
+   - 404 응답처리로 개선2 - 예외클래스 명시적으로 발생해서 처리
+  
+     ==> 장점: 사용자 입장에서 발생된 예외 메시지를 확인할수 있음.
+             예외발생시 다음 정보를 확인할 수 있음.
+	       {
+		"timestamp": "2025-02-03T07:54:17.983+00:00",
+		"status": 404,
+		"error": "Not Found",
+		"trace": "com.exam.exception.UserException: 100 에 해당하는 데이터가 없음.\r\n\tat com.exam.controller.UserController.findById(UserController.java:118)\r\n\tat java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\r\n\tat java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)\r\n\tat java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\r\n\tat java.base/java.lang.reflect.Method.invoke(Method.java:568)\r\n\tat org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255)\r\n\tat org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188)\r\n\tat org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)\r\n\tat org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:926)\r\n\tat org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:831)\r\n\tat org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)\r\n\tat org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)\r\n\tat org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)\r\n\tat org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)\r\n\tat org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903)\r\n\tat jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564)\r\n\tat org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)\r\n\tat jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)\r\n\tat org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)\r\n\tat org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)\r\n\tat org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)\r\n\tat org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)\r\n\tat org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)\r\n\tat org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)\r\n\tat org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)\r\n\tat org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)\r\n\tat org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)\r\n\tat org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)\r\n\tat org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)\r\n\tat org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)\r\n\tat org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)\r\n\tat org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)\r\n\tat org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)\r\n\tat org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)\r\n\tat org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)\r\n\tat org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)\r\n\tat org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)\r\n\tat org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)\r\n\tat org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)\r\n\tat org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)\r\n\tat org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)\r\n\tat org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)\r\n\tat org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:389)\r\n\tat org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)\r\n\tat org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:904)\r\n\tat org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741)\r\n\tat org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)\r\n\tat org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190)\r\n\tat org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)\r\n\tat org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)\r\n\tat java.base/java.lang.Thread.run(Thread.java:842)\r\n",
+		"message": "100 에 해당하는 데이터가 없음.",
+		"path": "/app/rest/users/100"
+		}
+
+
+                // 기본적으로 500 에러가 발생됨. 404 변경해야 됨.
+		@ResponseStatus(code = HttpStatus.NOT_FOUND)
+		public class UserException extends RuntimeException{
+
+			public UserException(String message) {
+				super(message);
+			}
+		}
+
+		
+		// 404 에 대한 개선2 - 사용자 예외 클래스 이용
+			@GetMapping("/rest/users/{id}")
+			public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
+				
+				UserDTO dto = service.findById(id);
+				if(dto == null) throw new UserException(id+ " 에 해당하는 데이터가 없음.");
+				
+				return ResponseEntity.status(200).body(dto);
+			}
+	
+
+   - 404 응답처리로 개선3 -  에러메시지 커스터마이징 하자.
+                       @RestControllerAdvice +  extends ResponseEntityExceptionHandler
+
+           // Rest 방식의 전역 예외처리
+	@RestControllerAdvice 	// @ControllerAdvice 사용가능
+	public class CustomizedResponseEntityExceptionHandler
+			   extends ResponseEntityExceptionHandler {
+
+		
+		@ExceptionHandler({ UserNotFoundException.class })
+		public final ResponseEntity<ErrorDetails> handleUserNotFoundException(Exception ex, WebRequest request) throws Exception {
+			
+			// 에러메시지 저장할 ErrorDetails 생성
+			ErrorDetails errorDetails =
+					new ErrorDetails(ex.getMessage(), LocalDate.now(), request.getDescription(false));
+			
+		   return new ResponseEntity<ErrorDetails>(errorDetails, HttpStatus.NOT_FOUND);
+		}
+	}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ 8. 사용자 입력 데이터 유효성 체크 - @Valid 이용
+
+   1) 의존성 설정
+
+   		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+   
+   2) UserDTO.java 에 유효성 관련 어노테이션 설정
+    
+          @AllArgsConstructor
+	@NoArgsConstructor
+	@Setter
+	@Getter
+	@ToString
+	@Alias("UserDTO")
+	public class UserDTO {
+
+	 @NotBlank(message = "id 필수") 
+	 Long id;
+	 
+	 @NotBlank(message = "username 필수") 
+	 String username;
+	 
+	 
+	 @Past(message = "과거 날짜만 가능")  
+	 LocalDate birthdate;
+	 
+	}
+
+    3) Controller 에서 @Valid 파라미터 설정.  
+         단 예외처리를 담당하는 BindingResult 필요없고  
+	 대신 CustomizedResponseEntityExceptionHandler.java 전역 예외 핸들러에서 처리함.
+
+       
+	@PostMapping("/rest/users")
+	public ResponseEntity<UserDTO> save3(@Valid  @RequestBody UserDTO dto) {  // SOAP 방식의 BindingResult 필요없음. 대신 ExceptionHandler가 처리함.
+		int n = service.save(dto);        
+		
+	==> 유효성 검증이 위배되면 에러가 발생되고
+		발생된 에러를 전역에러처리 방법으로 핸들링함
+
+    4) ExceptionHandler 에서 예외처리
+
+      => ResponseEntityExceptionHandler 안에 사용자 입력 데이터 유효성 체크를 예외하는 메서드가 정의됨.
+         이것을 재정의하면 됨. ( handleMethodArgumentNotValid 메서드 재정의 )
+
+	// Rest 방식의 전역 예외처리
+	@RestControllerAdvice
+	public class CustomizedResponseEntityExceptionHandler
+			   extends ResponseEntityExceptionHandler {
+
+		
+		// 사용자 입력 데이터 유효성 예외 처리하는 메서드를 재정의함.
+		@Override
+		protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+				HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+			
+			// 에러메시지 저장할 ErrorDetails 생성
+			// ex.getMessage() 하면 출력되는 에러메시지가 너무 많다.
+			// ex.getFieldError().getDefaultMessage() 하면 예외 발생된 개별 에러메시지만 출력됨.
+			ErrorDetails errorDetails =
+							new ErrorDetails(ex.getFieldError().getDefaultMessage(), LocalDate.now(), request.getDescription(false));
+					
+			return new ResponseEntity(errorDetails, HttpStatus.BAD_REQUEST);  	// 400 에러 	
+															// BAD_REQUEST말고 NOT_FOUND 하면 404 뜸.
+				   
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ 9. Swagger ( Open API )
+
+   1) 개념
+     REST API를 사용하는 사용자는  REST 의 정보를 잘 알아야 된다.
+     예> 엔드포인트, method 정보, 파라미터 유무 및 필수(옵션) 등
+
+     위의 정보들을 매우 쉽게 알려주는 라이브러리를 사용할 수 있음.
+
+  2) Open API 와 Swagger 차이점
+
+        Open API (스펙, 인터페이스 개념)
+	  |
+	  |
+	  |
+        Swagger (구현체,  클래스 개념) 
+ 
+
+  3)  구현방법
+
+    가. 의존성 설정
+
+        <dependency>
+	  <groupId>org.springdoc</groupId>
+	  <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+	  <version>2.6.0</version>  // 버전에 주의할 것.
+       </dependency>
+
+       http://localhost:8090/app/swagger-ui/index.html
+
+    
+   나. 추가 설정
+            @Operation(
+		    summary = "id 용해서 user 조회",
+		     description = "user 조회"
+			)
+	    @Parameters({@Parameter(name = "id", description = "User의 pk값", required = true)})
+		@GetMapping("/rest/users/{id}")
+		public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
+			
+			UserDTO dto = service.findById(id);
+			if(dto == null) throw new UserNotFoundException(id+ " 에 해당하는 데이터가 없음.");
+			
+			return ResponseEntity.status(200).body(dto);
+		}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+10. HATEOAS ( 헤이티오스:  Hypermedia as the engine of application state )
+
+ 
+  1) 개념
+   
+    - 요청에 따른 응답할 때 사용자가 필요할만한 정보를 제공하자.
+
+    예>  사용자가 게시판에 10번글 요청한 경우
+
+       가. 일반적인 상황
+
+        클라이언트                   서버
+	            10
+	      ------------------>
+	      <----------------
+	            10번 해당 글 반환
+
+      나. HATEOAS
+
+        
+        클라이언트                   서버
+	            10
+	      ------------------>
+	      <----------------
+	           
+
+        그 다음 요청?
+	- 전체 글 요청
+	- 11 번 글 요청
+	-  9 번 글 요청
+	..
+
+
+   2) REST 구현 4가지 레벨
+
+     레벨0:
+     레벨1:
+     레벨2: GET/POST/PUT/DELETE  <== REST 개발시 일반적으로 레벨2까지만 대부분 구현함.
+     레벨3: HATEOAS
+
+   
+    3) 구현
+
+     가. 의존성 설정
+	<dependency>
+	  <groupId>org.springframework.boot</groupId>
+	   <artifactId>spring-boot-starter-hateoas</artifactId>
+        </dependency>
+
+     나. UserController 에서 HATEOAS 코드 추가
+
+        EntityModel       :  Model 저장 역할 ( 요청에 해당되는 UserDTO 저장 역할 )
+	WebMvcLinkBuilder :  link 생성 역할
+
+
+        	//2. HATEOAS 설정
+	@GetMapping("/rest/users/{id}")
+	public EntityModel<UserDTO> findById(@PathVariable Long id) {
+		
+		UserDTO dto  =service.findById(id);
+		
+		// 요청에 해당되는 UserDTO 저장 역할
+		EntityModel<UserDTO> entityModel = EntityModel.of(dto);
+		
+		// 추가링크 설정
+		// 전체 사용자 조회
+		WebMvcLinkBuilder link1 = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).findAll());
+		
+		// 요청한 id 다음 사용자 조회
+		WebMvcLinkBuilder link2 = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).findById(id+10));
+		
+		// 요청한 id 이전 사용자 조회
+		WebMvcLinkBuilder link3 = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).findById(id-10));
+		
+		
+		// 생성된 링크를 최종적으로 EntityModel 저장
+		entityModel.add(link1.withRel("findAll"));  // 저장된 링크에 대한 key값 설정
+		entityModel.add(link2.withRel("next_user"));  // 저장된 링크에 대한 key값 설정
+		entityModel.add(link3.withRel("prev_user"));  // 저장된 링크에 대한 key값 설정
+		
+		return entityModel;
+	}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+11.  필터링 (filtering)
+
+   1) 개념
+
+     - 현재는 요청했을때 UserDTO를 JSON으로 반환함.
+       이때 JSON의 key값이 UserDTO 의 변수명으로 자동으로 설정된다.
+       또한 UserDTO 의 모든 변수값이 JSON으로 반환됨.
+
+   2) JSON의 key값 변경
+    
+      - @JsonProperty("키값")
+
+       예>  
+         public class UserDTO {
+
+	 Long id;
+	 
+	 @JsonProperty("name")	// JSON으로 생성될 때 key 값
+	 String username;
+	 LocalDate birthdate;
+	 
+        }
+ 
+    3) UserDTO 변수 제외
+
+       - @JsonIgnore
+
+       예>
+          public class UserDTO {
+
+	 Long id;
+	 
+	 @JsonProperty("name")
+	 String username;
+	 
+	 @JsonIgnore
+	 LocalDate birthdate;
+	 
+	}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+12. Rest + Spring Security + Token 기반
+
+https://github.com/spring-projects/spring-security-samples/tree/main/servlet/spring-boot/java/jwt/login  참조
+
+   1) Token 처리 
+
+    로그인 요청: 
+         {
+            id:"inky4832",
+	    pw:"1234"
+ 
+	 }
+
+==> JwtTokenService 의 generateToken ( ) 메서드에서 Token을 생성한다
+
+     응답:
+         {
+            token: 암호화된토큰값 <== 내부적으로 사용자id+pw+추가하고자하는임의값
+	 }
+
+   클라이언트(reactjs)에서는 응답받은 token을 저장하고 나중에 로그인 이후의 요청(장바구니관련,mypage..)은 반드시 token 값을 전달해야된다.
+   header 에 token 값을 설정한다.
+
+  ->  Authorization: Bearer 토큰값 
+
+이렇게 받은 토큰값이 유효하면 장바구니, mypage 보여줌
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+- SOAP : id/pw 비교 후 서버 쪽 메모리 ( 세션 ) 에 저장 - 웹 브라우저
+- REST : 웹 브라우저가 아닐 수도 있기 때문에 세션에 저장하지 않음. => 클라이언트 ( 로컬 스토리지 ) 에 저장 ( token 사용 )
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+     
+    2) 구현 
+
+     가. 의존성 설정
+
+                 <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		 <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		 </dependency>
+		 <dependency>
+		    <groupId>org.projectlombok</groupId>
+		    <artifactId>lombok</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework.boot</groupId>
+		  <artifactId>spring-boot-starter-security</artifactId>
+	   </dependency>
+
+<!-- token -->
+<dependency>
+	  <groupId>org.springframework.boot</groupId>
+	  <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+</dependency>
+
+<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-configuration-processor</artifactId>
+</dependency>   
+<!-- token -->
+
+	<dependency>
+	   		 <groupId>org.mybatis.spring.boot</groupId>
+	   		 <artifactId>mybatis-spring-boot-starter</artifactId>
+	    <version>3.0.3</version>
+		</dependency>
+		        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency>
+			    <groupId>mysql</groupId>
+			    <artifactId>mysql-connector-java</artifactId>
+			    <version>8.0.33</version>
+		</dependency>
+	    <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+
+     나.  member 테이블
+
+         use testdb;
+
+	 create table member (
+	   
+	   userid varchar(255) primary key,
+	   passwd varchar(255) not null,
+	   username varchar(255) not null 
+	 );
+
+     다. application.properties 설정
+
+        # 로그레벨 수정
+	#logging.level.root=info
+
+	#logging.level.org.springframework=info
+	logging.level.com.exam=info
+
+	# tomcat port 번호 변경
+	server.port=8090
+
+	# context명 변경
+	server.servlet.context-path=/app
+
+	# DB 연동
+	spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+	spring.datasource.url=jdbc:mysql://localhost:3306/testdb
+	spring.datasource.username=root
+	spring.datasource.password=1234
+	# DeptMapper 등록
+	mybatis.mapper-locations=com/exam/config/*Mapper.xml
+	# DTO 별칭
+	mybatis.type-aliases-package=com.exam.dto
+
+	#  SQL의 컬럼명: target_date   ,  DTO 변수명: targetDate  인 경우
+	#  별칭 또는 resultMap 으로 명시적으로 설정해서 사용했음.
+	#  이 작업을 자동으로 할 수 있다.
+	mybatis.configuration.map-underscore-to-camel-case=true
+
+	# // /** 설정시 적용
+	spring.mvc.pathmatch.matching-strategy=ant-path-matcher
+
+	# LocatDate 사용시 날짜 포맷 지정. 4자리년도-2자리월-2자일 예> 2025-05-23
+	spring.mvc.format.date=yyyy-MM-dd
+
+
+    라. MemberDTO.java ( 유효성 체크 )
+
+	 @AllArgsConstructor
+	@NoArgsConstructor
+	@Setter
+	@Getter
+	@ToString
+	@Alias("MemberDTO")
+	public class MemberDTO {
+
+		@NotBlank(message = "userid 필수")
+		String userid;
+
+		String passwd;
+		
+		@NotBlank(message = "username 필수")
+		String username;
+		
+	}
+ 
+    마. MemberMapper.xml  과 MemberMapper.java
+
+        - 기능 3가지만 구현
+	  => 회원가입  ( 인증불필요 )
+	  => 로그인   ( 인증불필요, token 얻기 )
+	  => mypage ( 인증필요, token 이용해서 header에 설정: Authorization: Bearer 토큰값 )
+														 ^
+													한 칸 띄우는거 주의
+
+
+    바.  MemberService.java , MemberServiceImpl.java  ( 회원가입과 mypage 만 구현)
+
+		// 회원가입과 mypage만 구현하자.
+		public interface MemberService {
+			public int save(MemberDTO dto);
+			public MemberDTO findById(String userid);
+		}
+
+		@Service
+		public class MemberServiceImpl implements MemberService{
+
+			MemberMapper mapper;
+			
+			public MemberServiceImpl(MemberMapper mapper) {
+				this.mapper = mapper;
+			}
+
+			@Override
+			@Transactional
+			public int save(MemberDTO dto) {
+				return mapper.save(dto);
+			}
+
+			@Override
+			public MemberDTO findById(String userid) {
+				return mapper.findById(userid);
+			}
+
+		}
+
+
+    사. AuthenticationService.java,  AuthenticationServiceImpl.java ( 로그인 구현 )
+
+        // 로그인만 구현하자.
+	public interface AuthenticationService {
+
+		public MemberDTO authenticate(Map<String, String> map);;
+	}
+
+        // 로그인만 구현하자.
+	@Service
+	public class 현 implements AuthenticationService{
+
+		MemberMapper mapper;
+		
+		public AuthenticationServiceImpl(MemberMapper mapper) {
+			this.mapper = mapper;
+		}
+
+		@Override
+		public MemberDTO authenticate(Map<String, String> map) {
+			return mapper.authenticate(map);
+		}
+	}
+
+    아. MemberController.java ( 회원가입과 mypage 만 구현 )
+
+		@RestController
+		@Slf4j
+		public class MemberController {
+
+			MemberService service;
+			public MemberController(MemberService service) {
+				this.service = service;
+			}
+
+			//회원가입
+			/*
+			    Talend API 에서 다음과 같이 JSON 요청하자.
+			    POST 요청
+			    header값: Content-type:application/json
+			     {
+				"userid":"kim4832",
+				"passwd":"1234",
+				"username":"김유신"
+			      }
+			     위 JSON을 자바의 MemberDTO 에 저장됨. 
+			 */
+			 @PostMapping("/save")
+			 public ResponseEntity<MemberDTO> save(@Valid  @RequestBody MemberDTO dto) {
+				 log.info("비번 암호화전: {}", dto.getPasswd());
+				 //비번을 암호화 해야됨.
+				 String encodedPW = new BCryptPasswordEncoder().encode(dto.getPasswd());
+				 log.info("비번 암호화후: {}", encodedPW);
+				 
+				 dto.setPasswd(encodedPW);
+				 int n = service.save(dto);
+				 
+				 return ResponseEntity.created(null).build();  // 201 상태코드 반환됨.
+			 }
+			 
+			 //로그인 이후(인증후)의 요청가능
+			 @GetMapping("/mypage")
+			 public void mypage() {
+				 
+				 
+			 }
+		 
+		}
+
+     자.  com.exam.security.JwtTokenResponse.java
+      
+         - 용도: token 과 로그인한 userid 저장
+	       필요시 추가 정보 저장 가능함.
+
+	 com.exam.security.JwtTokenService.java
+
+	 - 용도: id와 pw이 저장된 Authentication 및 여러 추가 정보를 mix해서 최종적으로 token(문자열) 생성.
+
+	 com.exam.security.JwtSecurityFilterChainConfig.java
+
+	 - 용도: Security Filter Chain 용도
+
+
+
+     차. /home 과 /hello-world 요청처리하는 HomeController.java
+
+
+     카. JwtTokenProvider.java
+
+        용도: 입력된 id와 pw 이용해서 DB와 연동해서 검증작업후 최종적으로  token 반환해주는 역할.
+
+	package com.exam.security;
+
+		import java.lang.reflect.Member;
+		import java.util.ArrayList;
+		import java.util.List;
+		import java.util.Map;
+
+		import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+		import org.springframework.security.core.GrantedAuthority;
+		import org.springframework.security.core.authority.SimpleGrantedAuthority;
+		import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+		import org.springframework.security.crypto.password.PasswordEncoder;
+		import org.springframework.stereotype.Component;
+
+		import com.exam.dto.MemberDTO;
+		import com.exam.service.MemberService;
+
+		//용도: 입력된 id와 pw 이용해서 DB와 연동해서 검증작업후 최종적으로  token 반환해주는 역할.
+
+		@Component
+		public class JwtTokenProvider {
+
+			MemberService memberService;
+			JwtTokenService tokenService;
+			
+			public JwtTokenProvider(MemberService memberService, JwtTokenService tokenService) {
+				this.memberService = memberService;
+				this.tokenService = tokenService;
+			}
+
+
+			public String authenticate(Map<String, String> map) {
+				String encodedtoken=null;
+				
+				String userid = map.get("userid");
+				String passwd = map.get("passwd");
+				
+				MemberDTO dto = memberService.findById(userid);
+				
+				PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+				UsernamePasswordAuthenticationToken token = null;
+				if( dto != null && passwordEncoder.matches(passwd, dto.getPasswd())) {
+					
+					MemberDTO new_dto = new MemberDTO();
+					new_dto.setUserid(userid);
+					new_dto.setPasswd(passwd); // 1234
+					new_dto.setUsername(dto.getUsername());
+					
+					List<GrantedAuthority> authorities = new ArrayList<>();
+					authorities.add(new  SimpleGrantedAuthority("USER")); 
+					
+					// 다음 token 정보가 세션에 저장된다.
+					token = new UsernamePasswordAuthenticationToken(new_dto, null, authorities);
+		//			token = new UsernamePasswordAuthenticationToken(userid, null, authorities);
+
+				}//end if
+				
+				// Authentication 을 이용해서 token 생성
+				encodedtoken = tokenService.generateToken(token);
+						
+				return encodedtoken;
+			}
+		}
+
+     타.  AuthenticationController.java ( 로그인 처리 )
+
+        package com.exam.controller;
+
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.exam.security.JwtTokenProvider;
+import com.exam.security.JwtTokenResponse;
+
+import lombok.extern.slf4j.Slf4j;
+
+@RestController
+@Slf4j
+public class AuthenticationController {
+
+	/*
+	   로그인 요청은 반드시 POST
+	 
+	   로그인 요청: 
+	     header정보: Content-Type: application/json
+	     
+         {
+            id:"kim4832",
+	        pw:"1234"
+ 
+	      }
+
+
+       응답:
+         {
+            token: 암호화된토큰값 <== 내부적으로 사용자id+pw+추가하고자하는임의값
+	        userid:inky4832
+	      }
+
+	 
+	*/
+	JwtTokenProvider tokenProvider;
+	
+	public AuthenticationController(JwtTokenProvider tokenProvider) {
+		this.tokenProvider = tokenProvider;
+	}
+
+
+	@PostMapping("/authenticate")
+	public ResponseEntity<JwtTokenResponse> authenticate(@RequestBody Map<String, String> map) {
+		
+		String token  = tokenProvider.authenticate(map);
+		
+		JwtTokenResponse response = 
+				new JwtTokenResponse(token, map.get("userid"));
+		
+		return ResponseEntity.status(200).body(response);
+	}
+	
+}
+////////////////////////////////////////////////////////////////////////////////////////////
+
+
