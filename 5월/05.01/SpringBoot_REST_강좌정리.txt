@@ -586,7 +586,7 @@ public class UserController {
 						  .path("/{id}")  //  dto.getId() 값으로 치환됨.
 						  .buildAndExpand(dto.getId())
 						  .toUri();
-          ResponseEntity<UserDTO> entity = ResponseEntity.created(location).build()
+          ResponseEntity<UserDTO> entity = ResponseEntity.created(location).build()	// 201
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -781,7 +781,7 @@ public class UserController {
     
    나. 추가 설정
             @Operation(
-		    summary = "id 용해서 user 조회",
+		    summary = "id 이용해서 user 조회",
 		     description = "user 조회"
 			)
 	    @Parameters({@Parameter(name = "id", description = "User의 pk값", required = true)})
@@ -918,7 +918,7 @@ public class UserController {
 	 String username;
 	 
 	 @JsonIgnore
-	 LocalDate birthdate;
+	 LocalDate birthdate;	// birthdate는 안뜸
 	 
 	}
 
