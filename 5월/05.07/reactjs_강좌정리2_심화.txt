@@ -1,0 +1,654 @@
+////////////////////////////////////////////////////////////////////////////
+
+17. 서버연동1- fetch API 이용
+https://developer.mozilla.org/ko/docs/Web/API/Window/fetch
+https://developer.mozilla.org/ko/docs/Web/API/Fetch_API
+
+    1) 문법
+     
+      const reseponse = fetch( url, {method:'get', headers:{'Content-Type':'application/json',..}} );
+
+    2) 구현
+
+	다음과 같이 서버 연동 코드를 외부 파일로 분리하고
+	사용 시 import 해서 사용됨
+
+      가. api/httpService.js 
+      
+
+
+
+17. 서버연동2- axios API 이용
+
+	async 	-> 	비동기 ( 성능 up )
+	await		->	응답 올 때까지 기다림
+   
+   https://axios-http.com/kr/ 반드시 참조할 것.
+
+    1)설치
+     
+     cd my-app
+     npm install axios  <== my-app 프로젝트안에서 실행, 
+                            package.json 에서 "axios": "^1.7.9" 확인 가능
+
+     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+	
+     - fetch 는 응답에 데이터를 response.json() 메서드를 명시적으로 사용해야 된다.
+       axios 는 자동으로 JSON으로 변환해서 반환한다.
+
+    2) 사용
+
+     가. import 
+
+        import axios from 'axios'
+
+
+     나. 문법
+
+      --GET  방식:
+       
+       // get 메서드 이용
+        const response = await axios.get('/user?ID=12345'); 
+	const response = await axios.get('/user',{
+						   params:{
+						     ID:12345
+						   }
+ 	                                          }); 
+
+	// method:'get' 속성이용
+	const response = await axios({
+			  method: 'get',
+			  url: '/user?ID=12345'
+			})
+
+	
+	--POST (PUT) 방식:
+
+	  // post 메서드 이용
+	 const response = await axios.post('/user/12345', {
+				    firstName: 'Fred',
+				    lastName: 'Flintstone'
+				  },{
+				       headers:{
+					  'Content-Type':'application/json'	
+				        }	
+				     }
+				  )
+         // method:'post' 속성이용
+	 const response  = await axios({
+				  method: 'post',
+				  url: '/user/12345',
+				  data: {
+				    firstName: 'Fred',
+				    lastName: 'Flintstone'
+				  },
+				  headers:{
+				    'Content-Type':'application/json'	
+				  }
+				});
+
+
+	
+
+    --DELETE  방식:
+       
+        // delete 메서드 이용
+        const response = await axios.delete('/user?ID=12345'); 
+	const response = await axios.delete('/user',{
+						   params:{
+						     ID:12345
+						   }
+ 	                                          }); 
+       // method:'delete' 속성이용
+	const response = await axios({
+			  method: 'delete',
+			  url: '/user?ID=12345'
+			})
+
+
+    3) axios 인스턴스 ( axios instance )
+     
+      - 중복되는 URL 값 또는 파라미터, header 값들을 미리 설정해놓고 참조해서 재 사용하는 방식.
+
+      예>
+           // 설정
+             const instance = axios.create({
+		  baseURL: 'https://reqres.in/api',
+		  timeout: 1000,
+		  headers: {'Content-Type':'application/json'}
+		});
+
+
+           // 사용
+	   // const response = await axios({  methdo: 'get', url: `https://reqres.in/api/users?page=${n}`
+	    const response = await instance({methdo:'get', url:`/users?page=${n}`})
+
+
+   4) interceptor
+
+      const instance = axios.create({
+		  baseURL: 'https://reqres.in/api',
+		  timeout: 1000,
+		  headers: {'Content-Type':'application/json'}
+		});
+
+    // 요청 인터셉터 추가하기
+	instance.interceptors.request.use(function (config) {
+	    // 요청이 전달되기 전에 작업 수행
+
+	    return config;
+	  }, function (error) {
+	    // 요청 오류가 있는 작업 수행
+	    return Promise.reject(error);
+	  });
+
+	// 응답 인터셉터 추가하기
+	instance.interceptors.response.use(function (response) {
+	    // 2xx 범위에 있는 상태 코드는 이 함수가 실행됨
+	    // 응답 데이터가 있는 작업 수행
+	    return response;
+	  }, function (error) {
+	    // 응답 오류가 있는 작업 수행
+	    return Promise.reject(error);
+	  });
+
+/////////////////////////////////////////////////////////////////////////////
+
+18. 라우팅
+
+  1)개요
+
+    메뉴:      로그인 회원가입
+             ----------------
+ 
+             로그인화면|회원가입화면
+
+
+  2) 설치
+
+   https://reactrouter.com/6.29.0    <== 현재 최신 버전은 7.X,  (7.X 과 6.X 의 라우팅 문법이 많이 다름.)
+
+   npm install react-router-dom@6.29.0
+
+   package.json에 "react-router-dom": "^6.29.0" 추가됨.
+
+  
+  3)기본적인 라우팅 구조 작업
+
+   https://reactrouter.com/6.29.0/start/tutorial#adding-a-router 참조할 것
+
+    # Main.js
+
+	import {createBrowserRouter,RouterProvider} from "react-router-dom";
+
+	const router = createBrowserRouter([
+	  {
+	    path: "/",  // http://localhost:3000/
+	    element: <div>Home 컴포넌트입니다.</div>                  <== 나중에는  pages/Home.js 컴포넌트로 만듬
+	    
+	  },
+	  {
+	    path: "/signup", // http://localhost:3000/signup
+	    element: <div>Signup 컴포넌트입니다</div>,                <== 나중에는  pages/Signup.js 컴포넌트로 만듬
+	  },
+	]);
+
+	function Main() {
+	  return (
+	    <RouterProvider router={router} />
+	  );
+	}
+
+	export default Main;
+
+
+   4) 컴포넌트간 연결 방법
+
+     가. <a href="">
+        - 전체 페이지가 새롭게 로딩되기 때문에 네트워크 동작이 발생됨.
+
+
+     나. <Link to="">  *** 권장 ***
+        - 내부적으로 화면이 랜더링 되기 때문에 네트워크 동작이 발생 안됨. 
+	  성능적으로 우수.
+
+	- 필요시 타겟 컴포넌트에서 파라미터 전달 가능.
+	  <Link to="/signup" state={{username:'홍길동'}}>
+
+	  타겟 컴포넌트에서는 다음과 같이 useLocation() 이용하여 참조가능.
+	  const {state} =  useLocation();
+	  console.log(state.username)
+
+
+   5) 메뉴 역할의 컴폰넌트 작성 
+     
+     https://reactrouter.com/en/main/start/tutorial#nested-routes  참조할 것
+
+
+      # pages/RootLayout.js
+
+	function RootLayout(){
+
+	    return(
+		<>
+		<div>
+		    <Link to="/">Home</Link>                  <== 나중에 메뉴 링크만 가진 MenuNavigation.js 컴포넌트를 만들 예정임
+		    <Link to="/signup">signup</Link>              
+		</div>
+	    <hr/>
+		<div id="detail">
+		     <Outlet />     <====  자식 컴포넌트들이 보여줄 영역 지정
+		</div>
+		</>
+	    )
+	}
+	export default RootLayout;
+
+      
+      # Main.js
+
+         const router = createBrowserRouter([
+		  {
+		    path:"/",
+		    element:<RootLayout/>,
+		    children:[
+		      {
+			path: "/",  // http://localhost:3000/
+			element: <Home />
+			
+		      },
+		      {
+			path: "/signup", // http://localhost:3000/signup
+			element: <Signup />,
+			
+		      },
+		    ]
+		  }
+		]);
+
+
+   6) 404 예외처리
+
+https://reactrouter.com/en/main/start/tutorial#handling-not-found-errors
+
+     - 기본적으로 404 예외발생시 다음과 같은 메시지가 출력된다.
+        Unexpected Application Error!
+	404 Not Found
+
+     - 필요시 예외처리 페이지를 구현할 수 있음.
+
+
+
+      # ErrorPage.js
+
+                import { useRouteError,Link } from "react-router-dom";
+		import MenuNavigation from "../components/MenuNavigation";
+
+		function ErrorPage(){
+		    const error = useRouteError();
+		    console.error(error);
+		  
+		    return (
+		      <div id="error-page">
+			  <MenuNavigation />
+			<hr/>
+			<h1>404에러</h1>
+			<p>요청한 경로는 존재하지 않는 url경로입니다. 확인하세요</p>
+			<p>
+			  <i>{error.statusText || error.message}</i>
+			</p>
+		      </div>
+		    );
+		}
+		export default ErrorPage;
+
+
+      # Main.js
+
+           {
+	    path:"/",
+	    element:<RootLayout/>,
+	    errorElement:<ErrorPage />,
+	    children:[
+
+
+      # MenuNavigation.js
+           
+	   function MenuNavigation(){
+	    return(
+		<>
+		<div>
+		    <Link to="/">Home</Link>
+		    <Link to="/signup">signup</Link>
+		</div>
+		</>
+	    )
+	}
+	export default MenuNavigation;
+
+ 7) 링크 적용하기 위한 방법 3가지
+
+   가. <a href="">
+   나. <Link to="">
+      - 사용자에게 피드백 제공 안됨.
+        즉 어떤 링크를 선택했는지 모름.
+  
+   다. <NavLink to="">
+
+   https://reactrouter.com/6.29.0/components/nav-link 참조.
+
+      - 사용자에게 피드백 제공됨.
+      - 기본적으로 자동으로 다음과 같이 className="active" 가 제공됨.
+
+        <NavLink to=""> ==> <NavLink to="" className="active">
+
+      - 필요시 커스텀 css 설정도 가능하다.
+
+         # css 
+	      
+	       // 기본 CSS 
+	       .active{
+		    color:red
+		}
+
+		.menu{
+		    color:red;
+		    background-color: yellow;
+		}
+
+	 # <NavLink> 설정
+	   
+	        <div>
+		    <NavLink to="/" >Home1</NavLink>   <==  <NavLink to="/" className="active">Home1</NavLink> 와 동일
+		    <NavLink to="/" className={({isActive})=>isActive?'menu':undefined}>Home2</NavLink>
+		    <NavLink to="/signup" className={({isActive})=>isActive?'menu':undefined}>signup</NavLink>
+		    <NavLink to="/login"className={({isActive})=>isActive?'menu':undefined}>login</NavLink>
+		</div>
+
+=====================================================================================================
+
+   8) 링크 적용 - 프로그래밍 이용
+
+     https://reactrouter.com/6.29.0/hooks/use-navigate 참조
+
+    - Home 에서 Login 으로 요청 구현방법
+      
+      # Home.js
+       import { useNavigate } from "react-router-dom";
+
+       const navigate = useNavigate();
+
+       navigate(경로);
+       navigate(경로,  { state: { key: value } }); <== <Link>와 동일하게  useLocation() 이용해서 참조 가능.
+
+      # Login.js
+      
+          const {state} = useLocation();
+	  state.key
+     
+    
+   9) 동적 라우팅 ( 파라미터 전송 방법 )
+
+      가.  url 포함하여 전송 ( path variable )
+https://reactrouter.com/6.29.0/hooks/use-params
+
+         예>  /users/2, /users/1
+
+          - useParams() 이용
+
+          Spring :  @GetMappring("/users/{id}") <== @PathVariable Long id
+	  ReactJS:  path:'/users/:id'           <== useParams() 이용
+ 
+	  Spring :  @GetMappring("/users/{id}/{email}") <== @PathVariable Long id
+	  ReactJS:  path:'/users/:id/:email'           <== useParams() 이용
+
+
+	    const xxx = useParams();  // {id: '1'}
+	    xxx.id
+            const {id} = useParams(); // 
+
+      나. query string 전송
+https://reactrouter.com/6.29.0/hooks/use-search-params
+
+         예>  /products?userid=2
+
+          - useSearchParams() 이용
+
+             let [searchParams, setSearchParams] = useSearchParams();
+	
+	     var userid = searchParams.get("userid")
+
+
+  10) useParams() 방식에서의 <Link to=""  relative="route|path"> 차이점 ( 기본은 route 임 )
+
+  https://reactrouter.com/6.29.0/components/link#relative
+
+
+     # 현재 라우트 및 경로는 다음과 같다.
+       ...
+        {
+          path: "/cart", 
+          element: <Cart /> ,
+        },
+        {
+          path: "/cart/:id", 
+          element: <CartDetail /> ,
+        }
+      ..
+
+      http://localhost:3000/cart/P2   
+
+       현재 route(경로): cart/P2      1개임
+       현재 path(경로):  cart 와  P2   2개임
+                 
+
+      <Link to=".." relative="route">뒤로</Link> ==>   http://localhost:3000/
+
+      <Link to=".." relative="path">뒤로</Link>  ==>   http://localhost:3000/cart
+
+   
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+  11) loader 함수 
+  https://reactrouter.com/6.29.0/route/loader
+
+     가. 문법
+       
+        {
+	   path:'',
+	   element:<Home/>,
+	   loader: 함수
+	}
+
+	==> Home 컴포넌트가 생성되기 전에 loader함수가 실행되어 서버와 연동해서 데이터를 가져와서 리턴함.
+	    리턴한 데이터를 Home 컴포넌트가 생성될때 참조 가능.
+	==> loader함수에서 리턴된 데이터는 다음과 같이 useLoaderData() 이용해서 참조할 수 있다.
+	   const data = useLoaderData();
+
+
+     나. 예외처리
+
+       - loader에서 발생된 예외는 errorElement:ErrorPage 가 담당.
+
+       - 기존 httpService.js에서 예외처리했던 다음 코드는 수정할 것이다.
+          throw new Error("fetchUserList 예외발생")      // 예외 정보가 빈약
+
+	  throw new Response("예외 메시지", {status:500}) // 부족한 예외정보 추가
+	  
+	  실제 ErrorPage에서는 Response객체에 담긴 status 값을 비교해서 적합한 예외메시지를 출력가능.
+
+	    function ErrorPage(){
+	    const error = useRouteError();
+	    console.error(error); 
+	  
+	    let message = "의도하지 않은 에러";
+	    let status = 404;
+
+	    if(error.status === 404){
+	      status = 404;
+	      message = error.data;
+	    }
+
+	    if(error.status === 500){
+	      status = 500;
+	      message = error.data;
+	    }
+
+      
+       실습방법:
+           httpService.js 에서 다음과 같이 수정하고 실습한다.
+
+            /예외처리 (실패했을 때)
+	    if ((response.status === 200)) {    <=============== 성공했을때 예외발생하도록 수정하고 실습한다.
+		console.log("에러발생")
+		// throw new Error("fetchUserList 예외발생")
+		throw new Response("fetchUserList 예외발생", { status: 500 })
+	    }
+
+   다. loader에게 파라미터 전달 가능 
+
+      a. path variable ( params 파라미터 이용 )
+        
+	  // /usersParam/2 요청시 2값이 params 파라미터로 전달됨
+
+		async function users_loader2({params}){
+		  console.log("users_loader2:", params) // {id: '1'}
+		  const resonse = await fetchUserList(params.id);
+
+		  return resonse;
+		}
+
+      b. query string  ( request 파라미터 이용 )
+
+         // usersQueryString?id=2 요청시 2값이 request 파라미터로 전달됨
+	
+		async function users_loader3({request}){
+		  console.log("users_loader3:", request) //
+		  const url = new URL(request.url);
+		  const id = url.searchParams.get("id");
+		  const resonse = await fetchUserList(id);
+
+		  return resonse;
+		}
+
+    라. 자식컴포넌트에서 부모 컴포넌트의 loader 사용하기
+
+	    path: "/",
+	    element: <RootLayout />,
+	    errorElement: <ErrorPage />,
+	    id: 'root',
+	    loader: root_loader,   // root 로더
+	    children: [
+	     
+	      ..
+	      {
+		path: "/users", // http://localhost:3000/users
+		element: <Users />,
+		loader: users_loader // users 로더
+	      },
+
+
+	   Users 컴포넌트에서는 root 로더 및 users 로더 2개 모두 사용 가능
+	     - useLoaderData(): users 로더 참조
+	     - useRouteLoaderData("root"): root 로더 참조
+
+//////////////////////////////////////////////////////////////////////////////////////
+  12) action 함수
+
+https://reactrouter.com/6.29.0/route/action
+
+     1) 기능
+       
+       - form 태그의 사용자 입력 데이터를 서브밋 해줌.
+
+       - 사용자 입력폼 작성시 반드시 컴포넌트인 <Form> 사용해야 되고  method="post" 지정해야 됨. ( <form> 안됨 )
+         submit 버튼을 클릭하면 action 함수가 호출됨.
+
+       - action 함수에 사용자 입력 데이터를 참조하는 방법
+
+          const formData =   request.formData()
+
+	  var userid = formData.get("userid");
+
+
+   13) useActionData() 이용한 폼 유효성 처리
+
+  - https://reactrouter.com/6.29.0/hooks/use-action-data  참조하여 유효성 체크를 구현하자.
+
+  1) 개요
+   action 및 loader 함수에서 return {key:value} 하면 
+   현재 컴포넌트에서 리턴한 {key:value} 참조할 수 있음.
+   유효성 체크에서 사용될 수 있음.
+  
+
+   예>  # Signup.js
+
+
+	   // return response 된 데이터 참조
+           const data = useActionData();
+           console.log("useActionData.data", data);	
+
+           ..
+	        <Form method="post">
+		id:<input type="text" name="id" /><br></br>
+		email:<input type="text" name="email" />
+	  {data && data.email}
+		<br></br>
+		first_name:<input type="text" name="first_name" />
+	  {data && data.first_name}
+		<br></br>
+	 
+
+           ...
+	   let email = formData.get("email");
+           let first_name = formData.get("first_name");
+
+	    ..
+	    // 사용자 입력 유효성 체크
+	  const errors = {};
+
+	  // validate the fields
+	  if (typeof email !== "string" || !email.includes("@")) {
+	    errors.email =
+	      "That doesn't look like an email address";
+	  }
+
+	  if (typeof first_name !== "string" || first_name.length < 2) {
+	    errors.first_name = "first_name must be > 2 characters";
+	  }
+
+	  // return data if we have errors
+	  //리턴되는 json을 현재컴포넌트인 Signup에서 useActionData()로 참조가능하다.
+	  if (Object.keys(errors).length) {
+	    return errors;  // JSON
+	  }
+
+
+  14) 네트워트 지연 관련 추가 작업
+
+    - 요청에 대한 작업을 열심히 하고 있음을 알려줘야됨.
+     
+    - useNavigation() 이용
+
+   예>
+      function RootLayout(){
+
+	    const navigation = useNavigation();
+            console.log("navigation: ", navigation.state)
+	    
+	    return(
+		<>
+	       <MenuNavigation />
+	    <hr/>
+		<div id="detail">
+		{navigation.state === 'loading' && <p>열심히 로딩중입니다.....</p>}
+		    <Outlet />
+		</div>
+		</>
+	    )
+	}
+
+
+
+/////////////////////////////////////////////////////////////////////////////
