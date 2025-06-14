@@ -1,0 +1,15 @@
+## 2025-06-12
+
+이미지가 jpg가 아닌 text/html로 뜸
+-> 프론트 경로 설정 문제
+
+thumbnailImageURl = /upload/파일명.jpg
+
+기존 : <img src = {thumbailImageUrl}
+
+변경 : const imgSrc = `http://localhost${thumbnailImageUrl}`
+	<img src = {imgSrc}
+
+=> jpg로 뜸
+
+-----------------------------------------------------------------------
