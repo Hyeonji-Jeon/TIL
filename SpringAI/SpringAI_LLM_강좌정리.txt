@@ -1,0 +1,398 @@
+
+
+Spring AI 강좌정리
+
+0.  openai 회원가입 및 API Key 얻기
+   
+   https://openai.com/   ( 2023년 3월 출시, 유료서비스, 사용한 토큰 수에 따라서 과금. )
+
+
+   가. 회원가입하기
+   Login 버튼 >  API Platform  > 회원 가입 
+   ////////////////////////////////////////////////////////////
+      - 
+	      이메일로 인증코드 확인후에 다음과 같은 화면이 나옴.
+
+	      Organization name: Personal
+	      What best dscribtes you?: Somewhat technical
+
+	      입력하고 Create organization 클릭함.
+
+	      Invite 나오면 그먕 continue 클릭
+	      
+	      API key name: My Test Key
+	      project name: Default project
+
+	     입력하고 Generate API key 클릭함.
+
+	     API key 복사
+	    
+          
+	     curl/Node/Python 에서 사용 샘플 제공함.
+   
+             마지막에 $5 달러 Credit 선택하고 카드정보 입력.
+
+	     billing를 먼저하고 나중에 API key를 발급받아야 된다.(*********)
+
+
+	      - 홈페이지 화면 좌상단에서 ChatGPT 링크 클릭하면 업그레이드도 가능.
+     
+	      Free 버전:  GPT-40 mini 임.
+	      Plue 버전:  월 20 달러
+	      Pro 버전 :  월 200 달러
+              https://openai.com/index/gpt-4o-mini-advancing-cost-efficient-intelligence/
+   
+   ////////////////////////////////////////////////////////////
+   나. OpenAI API key 얻기
+ 
+	- 우상단에 Log in > API Platform  > Start building 
+
+	  Organization name : Personal
+	  What best describes you? :  Somewhat technical
+
+	
+	- 좌 상단에 Personal / Default proejct 항목이 보임.
+          우 상단에 API reference > Authentication > 
+	   Project API Keys  > API keys > Create new screte key
+
+
+	   Name: MyTestKey
+	   Project: Default projet
+	   Permissions: All
+
+	   Create secret key 버튼 클릭.
+
+	  API key 복사
+
+
+   Billing 링크에서 현재 남은 잔액 확인 가능.
+
+
+1. 생성형 AI ( Generitive AI )
+
+  1) 개념
+   - 텍스트, 이미지, 영상, 음악등 다양한 형태의 데이터를 생성할 수 있는 인공지능 의미.
+
+
+  2) 주요 기술
+
+   가. 대규모 언어 모델 ( Large Language Model: LLM )
+     - 예> OpenAI 의 ChatGPT ( 수업에서 사용, 최소한 $5 비용 )
+          Google 의 Gemini ( 제미나이 )
+	  META 의 Llama ( 로컬에서 실행하면 무료 )
+
+   나. 컴퓨터 비전 기술
+     - GAN ( 생성적 적대 신경망) 
+       예> 딥페이크
+
+   다. 멀티 모달( multi modal)
+     - 이미지 및 사운드 생성
+
+ 3) AI 아키텍쳐
+ 
+    AI  ( Artificial Intelligence: 인공지능 )
+      ML (  Machine Learning: 머신러닝 )
+         DL ( Deep Learning: 딥러닝 )
+           생성형 AI ( Generitive AI )
+	       LLM  <== 빌려서 사용되는 방법으로 서비스에 적용가능.
+
+
+2. LLM 발전과정
+
+ 1) 초창기 모델
+  
+    - one-hot 인코딩 ( 0과 1로만 표현 )
+
+   => 단어에 번호를 매기고 그 번호에 해당하는 요소만 1이고 나머지는 0를 갖는 벡터로 표현.
+     각 단어를 고유한 벡터로 표현하여 컴퓨터가 텍스트를 처리하도록 돕기 위한 방법.
+
+    예> 고양이 - 1 0 0 0 
+       강아지 - 0 1 0 0 
+       새    - 0 0 1 0
+       멍멍이 - 0 0 0 1
+
+     가장 큰 단점은 단어간에 관련성을 설정하기가 매우 어려움.
+
+ 2) 개선 모델
+  
+   -  Word2Vect 모델
+   ==> 0과 1 벡터가 아니라 모든 차원이 값을 갖고 있는 벡터로 표현
+       하나의 정보가 여러 차원들이 조합되어 나타냄. ( 임베딩:embddeing )
+
+   예> 고양이 - [0.4  -0.3  0.7  0.1]  
+       강아지- [0.8  -0.9  0.1  0.9]  
+       멍멍이 - [0.85  -0.8  0.05  0.85] 
+
+     가장 큰 장점은 모든 차원에 값을 설정해서 단어간에 관련서(유사성)을 설정할 수 있음.
+     ( 거리가 가까울수록 유사한 단어 )
+ 
+  3) RNN ( Recurrent Neural Network, 순환 신경망 )
+
+     ==> 시계열 데이터와 같은 순차적 정보를 처리.
+         이전 데이터의 맥락을 이해하여 학습.
+	 장기 의존성 문제로 인해 긴 문맥을 처리하는데 어려움.
+
+  4) LSTM ( Long Short-Term Memory )
+
+     ==> RNN의 장기 의존성 문제를 보완한 모델로 긴 문맥을 효과적으로 처리.
+
+  
+  5) Transformer 
+
+     ==> 구글 연구진 제안
+         병렬처리 가능 ( 입력 단어를 동시에 처리 가능)
+	 효율적 학습 ( 대량의 데이터를 효율적으로 학습 )
+
+     ==> ChatGPT 등 현재의 대부분의 LLM 은 Transformer의 변경 모델임.
+
+
+
+3. 토큰 ( token )
+
+  1)개념
+
+    제공된 문장을 분리하는 작업을 의미.
+
+   예> 안녕하세요
+
+     안,녕,하,세,요 (1단계)
+      ...         <== 많이 사용하는 단어 묶음
+     안녕 하세요    <== 최종적으로 
+
+  2) ChatGPT는 BPE( byte pair encoding) 토큰나이저 이용.
+
+  https://platform.openai.com/tokenizer
+
+   토큰에 따라서 과금이 됨.
+
+
+ 4. LLM 주요 특징
+
+   가.대량 데이터 학습
+    ==> LLM은 대량의 데이터를 학습하여 언어를 이해하고 생성할 수 있는 능력을 갖춤.
+        다양한 언어적 과제를 수행
+ 
+   나.언어 처리 및 생성 능력
+    ==> LLM은 문장구조, 의미, 문맥을 이해하고 자연스러운 텍스트를 생성하는데 뛰어남.
+        텍스트 요약, 번역, 대화 생성등 다양한 응용 분야에서 활용
+
+   다. 미세 조정 가능 ( 파인튜닝 )
+    ==> 기본모델을 기업의 데이터로 추가 학습시켜 특화된 분야에 더 정교하게 
+        사용할 수 있도록 하는 과정.
+	LLM은 특정 작업이나 도메인에 맞게 추가학습(파인튜닝)을 할 수 있음.
+
+   라. 고성능 컴퓨팅 필요
+    ==> LLM을 개발하거나 미세조정, 운영하려면 상당한 컴퓨팅 자원이 필요.
+        GPU(그래픽처리장치)나 TPU(텐서처리장치)와 같은 고성능 하드웨어가 사용.
+
+   마. 프롬프트와 컴플리션 구조
+    ==> LLM에서 사용하는 질문이나 명령을 프롬프트(prompt)라고 부르고
+        모델이 생성하는 답변을 컴플리션(completion)이라고 부름.
+
+
+5. LLM의 한계
+
+   가. 데이터 편향과 공정성
+     => AI가 특정 데이터셋에서만 편향되어 학습.
+        데이터 편향성은 AI의 공정성과 신뢰성을 저해함.
+
+   나. 신뢰성 문제
+     => LLM이 학습한 데이터를 기반으로 답변하지만, 그 이유를 설명하지 못함.
+
+   다. 환각 문제
+     => 잘못된 정보를 이용해서 잘못된 정보를 생성으로 인한 신뢰성 저하.
+
+   라. 최신성 문제
+     => LLM은 특정 시점까지의 데이터로 학습되어 최신 정보를 반영하지 못함.
+     ==> 해결방법
+         - LLM 파인튜닝 ( 고비용 )
+	 - RAG( Retrieval Augmented Generation, 검색증강생성 )
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+6. Spring AI
+
+ 1) 개요
+  
+  다양한 모델(OpenAI의 ChatGPT, META의 LLaMA, 구글의 Gemini 등 )이
+  있기 때문에 사용하기 위한 기능, 구현이 모두 달라짐.
+  하지만 Spring AI 이용하면 동일한 접근방식으로 서로 다른 모델 사용이 가능. 
+  ( 모든 모델을 포함하는 추상화 계층을 제공함 )
+  따라서 추상화를 통해서 AI 어플리케이션 개발 구축에 집중할 수 있음.
+
+
+ 2) 처리 가능한 모델 종류
+
+    가. OpenAI 모델
+
+       - ChatGPT 모델
+       - 이미지 생성용 Dall-E 모델
+       - 텍스트 생성 및 음성변환 모델
+
+    나. Meta
+      
+       - LLama 모델
+
+    다. Google
+
+       - Gemini 모델
+
+    라. Hugging Face
+
+       -허깅페이스(Hugging Face)는 미국의 인공지능 스타트업으로, 
+        머신러닝 모델과 데이터셋을 제공하는 플랫폼. 
+	특히 트랜스포머와 같은 라이브러리를 통해 ML(머신러닝) 커뮤니티를 지원하며, 
+	많은 조직들이 이 플랫폼을 활용함.
+
+
+  3) Spring AI Documentation
+
+    https://spring.io/projects/spring-ai
+
+    - 현재는 1.0.0  current 버전.
+        Spring AI는 인공지능을 통합한 어플리케이션 개발을 
+	간소화하는 목표로 하는 서브 프로젝트임.
+	필요한 복잡성 없이 지능적인 기능을 제공함.
+
+      - 제공되는 모델을 다음과 같다.
+        Chat Completion
+	Embedding
+	Text to Image
+	Audio Transcription
+	Text to Speech
+	Moderation
+
+
+   4) 의존성 설정
+
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-web</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework.ai</groupId>
+		<artifactId>spring-ai-openai-spring-boot-starter</artifactId>
+	</dependency>
+
+
+  
+  5) application.properties 
+https://docs.spring.io/spring-ai/reference/1.0/api/image/openai-image.html#_image_generation_properties
+     
+    #spring.ai.openai.base-url=api.openai.com
+    spring.ai.openai.api-key=API키
+    spring.ai.openai.chat.options.model=gpt-4o-mini  # 기본은 gpt-4o 임
+
+    ==> https://openai.com/api/pricing/  참고하면 각 모델에 따른 비용확인 가능
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+7. RAG ( Retrieval Augmented Generation: 검색 증강 생성 )
+
+  1) 개념
+   - LLM 모델은 제공된 데이터로 학습이 되어 응답을 해줌.
+     제공된 데이터가 오래된 데이터이기 때문에 최신 데이터 요청에 대해 응답에 제한이 있음.
+
+  2) 용도
+    - 최신 데이터 제공
+    - 특정 회사(도메인)에 국한된 데이터 제공
+
+  3) 용어
+    - vector store ( 저장소 )
+      예> 파일, 또는 DB(Vector DB)
+
+    ///////////////////////////
+      * Vector DB
+        -임베딩 데이터(벡터)가 저장됨.
+	-유사도(유사성) 검색이 가능
+	- 종류: PGVector(PostgreSQL 의 확장기능 ), Chroma, Pinecone,....
+
+    //////////////////////////
+    
+     가. Docker Desktop 설치
+        https://www.docker.com/products/docker-desktop/
+
+	download for window AMD64
+
+     나. pgvector 접속하기 위한 도구
+        DBeaver
+	https://dbeaver.io/
+
+        DBeaver 에서 Postgres 접속시 드라이버 다운로드 에러발생시 해결은 다음 사이트 참조하자.
+        https://happy-jjang-a.tistory.com/214
+
+     다. PGVector 설치
+       - docker 이용
+       docker run -it --rm --name postgres -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres pgvector/pgvector:pg16
+
+     라. 의존성 설정
+
+             <!-- Vector Store : PGVector-->
+	    <dependency>
+	      <groupId>org.springframework.boot</groupId>
+	      <artifactId>spring-boot-starter-data-jpa</artifactId>
+	    </dependency>
+	    <dependency>
+	      <groupId>org.springframework.ai</groupId>
+	      <artifactId>spring-ai-pgvector-store-spring-boot-starter</artifactId>
+	    </dependency>
+
+     마. PGVector에 테이블 작성
+
+       src/main/resousce/schema.sql 작성
+
+       CREATE EXTENSION IF NOT EXISTS vector;
+	CREATE EXTENSION IF NOT EXISTS hstore;
+	CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+	CREATE TABLE IF NOT EXISTS vector_store (
+		id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+		content text,
+		metadata json,
+		embedding vector(1536) 
+	);
+
+	CREATE INDEX ON vector_store USING HNSW (embedding vector_cosine_ops);
+
+
+     바. application.properties 설정
+
+       # https://docs.spring.io/spring-ai/reference/1.0/api/vectordbs/pgvector.html 참조
+	spring.ai.vectorstore.pgvector.index-type=HNSW
+	spring.ai.vectorstore.pgvector.distance-type=COSINE_DISTANCE
+	spring.ai.vectorstore.pgvector.dimensions=1536
+
+	spring.datasource.url=jdbc:postgresql://localhost:5432/postgres
+	spring.datasource.username=postgres
+	spring.datasource.password=postgres
+
+     사. 특정 회사(도메인)에 국한된 데이터 제공 ( 파일 )
+        
+	job_list.txt
+
+
+     아.  PGVectorLoader.java
+     
+        - job_list.txt 읽어서 PGVector에 저장
+	- 멀티 파일 로드도 가능.
+
+
+     자. PGVector에서 데이터를 검색하기 위해서 반드시 Advisor를 설정해야 된다.
+
+       @Service
+	public class ChatServiceImpl implements ChatService {
+
+	    ChatClient chatClient;  
+		VectorStore vectorStore;
+		
+		public ChatServiceImpl(ChatClient.Builder builder, VectorStore vectorStore) {
+			this.chatClient = builder
+					    .defaultAdvisors( new MessageChatMemoryAdvisor(new InMemoryChatMemory())
+				,new QuestionAnswerAdvisor(vectorStore) <== job_lists.txt에서 검색함.
+								 ) // 전역 VectorStore
+					    .build();
+		
+			this.vectorStore = vectorStore;
+	    }
