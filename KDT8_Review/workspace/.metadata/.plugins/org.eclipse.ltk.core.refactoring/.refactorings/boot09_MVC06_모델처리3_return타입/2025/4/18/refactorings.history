@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;main.jsp&apos; to &apos;views&apos;&#x0D;&#x0A;- Original project: &apos;boot09_MVC06_모델처리3_return타입&apos;&#x0D;&#x0A;- Destination element: &apos;views&apos;&#x0D;&#x0A;- Original element: &apos;main.jsp&apos;" description="Copy file" element1="src/main/resources/META-INF/resources/WEB-INF/views/main.jsp" files="1" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1745892253792" target="/boot09_MVC06_모델처리3_return타입/src/main/resources/META-INF/resources/WEB-INF/views" units="0" version="1.0"/>
+</session>

@@ -1,0 +1,746 @@
+JPA 강좌정리
+
+1. JPA 와 Hibernate 관계
+    
+   - JPA
+     SpringBoot2.X ( Java Persistence API)
+     SpringBoot3.X ( Jakarta Persistence API)
+
+
+     JPA ( 스펙, 인터페이스 )
+      |
+   Hibernate ( 구현체, 클래스 )
+
+   https://docs.jboss.org/hibernate/orm/6.4/userguide/html_single/Hibernate_User_Guide.html
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+2. 환경설정
+
+  1) 의존성
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+	<dependency>
+	    <groupId>mysql</groupId>
+	    <artifactId>mysql-connector-java</artifactId>
+	    <version>8.0.33</version>
+        </dependency>
+	<dependency>
+	    <groupId>org.projectlombok</groupId>
+	    <artifactId>lombok</artifactId>
+	</dependency>
+
+  2) appplication.properties 설정
+
+        logging.level.root=info
+	logging.level.com.exam==info
+	logging.level.org.springframework=info
+
+	server.port=8090
+	server.servlet.context-path=/app
+
+	# MySQL 연동
+	spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+	spring.datasource.url=jdbc:mysql://localhost:3306/testdb2
+	spring.datasource.username=root
+	spring.datasource.password=1234
+
+
+	# JPA
+	# JPA가 자동으로 생성하는 SQL문 보기
+	logging.level.org.hibernate.SQL=trace
+	# 위의 SQL문을 보기 좋게 보기
+	spring.jpa.properties.hibernate.format_sql=true
+	logging.level.org.hibernate.type=info
+
+	# 자동으로 테이블 생성( create: drop+create )
+	# @Entity 지정된 클래스에 해당하는 테이블을 자동생성
+	spring.jpa.hibernate.ddl-auto=create  
+
+	# 자동으로 생성된 SQL문에서 사용되는 파라미터 보기
+	logging.level.org.hibernate.orm.jdbc.bind=trace
+
+	# 트랜잭션 처리후에 Connection 사용하고 pool에 반환여부( 기본값은 true이고 반환안함 )
+	spring.jpa.open-in-view=false
+
+	# JPA 버전이 낮은 경우에 지정했음. 실제 접속하는 DB용 SQL문 작성위한 정보임.
+	#spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+	  
+	spring.mvc.pathmatch.matching-strategy=ant-path-matcher
+	spring.mvc.format.date=yyyy-MM-dd
+
+
+3. 엔티티 (entity)
+
+  1) @Entity 어노테이션
+    
+     - DB의 table 과 맵핑역할.
+     - @Table(테이블명) : 기본적으로 DB의 테이블명은 클래스명으로 생성됨.
+                        @Table 사용하면 지정된 테이블명으로 생성됨.
+  
+       예> 
+        @Entity
+	@Table(name = "TB_MEMBER")
+	public class Member {
+
+		@Id // pk 역할
+		Long id;
+		
+		String name;
+
+	}
+
+     - 테이블생성 기능 활성화
+       spring.jpa.hibernate.ddl-auto=create
+
+        create:        drop 하고 create 함
+	create-drop:   create 동일. 종료할 때 drop
+	update:        변경사항만 반영
+	validate:      엔티티와 테이블간 잘 맵핑되었는지만 확인
+	none:          사용안함
+
+  2) @Id 
+    - DB의 table의 pk 맵핑역할.
+
+    예>
+        자바(객체)                               DB 
+      --------------------------           --------------------------        
+        @Entity                   
+        public class Member{                member 테이블
+
+	    @Id
+	    @GeneratedValue
+	    Long id;                        id 컬럼 (pk), auto_increment 기능
+	    Strng name;                     name 컬럼
+	
+	}
+
+    - @GeneratedValue 는 MySQL의 auto_increment 역할임.
+
+/////////////////////////////////////////////////////////////////////////////////
+ 3. SpringMVC + JPA 아키텍쳐
+
+                                             @Controller        @Service
+							        @Transactional
+   웹브라우저 -------> DispatcherServlet <----> Controller <-----> Service <-----> Repository <-----> MySQL
+			 |
+			 |
+			 |
+ 	   <------- jsp(thymeleaf)
+
+
+   - 엔티티 작성
+   
+       @Entity
+       public class User{
+
+	   @Id
+	   Long id;
+	   ...
+       }
+
+   - Repository 코드 작성 (*************************)
+
+        public interface UserRepository extends JpaRepository<User, Long>{    // <엔티티, pk>
+	
+		JpaRepository 에는 다음 메서드들은 기본적으로 제공됨.
+	 
+		   - 전체엔티티 조회:  findAll():List
+		   - 특정엔티티 조회:  findById(ID id):Optional
+		   - 엔티티 저장:     save(entity)
+
+		   - 엔티티 삭제
+		      전체삭제:  deleteAll()
+		      id로 삭제: deleteById(ID id)
+		      엔티티로 삭제: delete(T entity)
+
+		   - 엔티티 수정:  메서드 지원없이 더티체킹 이용.
+		   - 엔티티 갯수: count()
+
+
+	      만약 필요한 메서드가 없으면 직접 작성해야 된다.
+	        -JPQL 이용
+		-Query Method 이용
+	}
+
+  /////////////////////////////////////////////////
+	
+		     Entity Context(Entity저장소)
+		     --------------
+     개발자(사용자)                                     DB
+
+             -------> User생성 --------------------> User테이블에 하나의 레코드 생성됨
+	              (id:100)                      id:200 name:'홍길동'
+             save(user)                             id:300 name:'이순신
+
+
+	     ------->
+	     deleteById(100)
+	     delete(user)
+
+             ------->
+	     200삭제할려면?
+	    User x = findById(200); -->User(200)존재
+             delete(x)
+ 
+             
+	     ---->
+	     300을 유관순 변경?
+	     User x2 = findById(300); -->User(300,이순신)존재
+             x2.setName("유관순");      -->User(300,유관순)변경
+          
+
+
+  ////////////////////////////////////////////////
+
+    
+    1) Todo 단일 엔티티 이용한 CRUD 실습
+								JpaRepository<Todo,Long>	
+                                       TodoService                    |
+ 웹브라우저 -----> TodoController ------> TodoServiceImpl -------> TodoRepository (인터페이스)
+					
+				     				Todo(엔티티)
+
+				     TodoDTO <==> Todo
+
+	 # stream API 이용
+	 TodoDTO ---> Todo
+	 Todo    ---> TodoDTO
+	 List<TodoDTO> --> List<Todo>
+	 List<Todo> --> List<TodoDTO> 
+
+
+	 # JpaRepository 인터페이스내에 미리 구현된 메서드가 제공된다.
+	   
+	   - 전체엔티티 조회:  findAll():List
+	   - 특정엔티티 조회:  findById(ID id):Optional
+	   - 엔티티 저장:     save(entity)
+
+	   - 엔티티 삭제
+	      전체삭제:  deleteAll()
+	      id로 삭제: deleteById(ID id)
+	      엔티티로 삭제: delete(T entity)
+
+	   - 엔티티 수정:  메서드 지원없이 더티체킹 이용.
+	   - 엔티티 갯수: count()
+
+	  만약 필요한 메서드가 없다면?
+		가. JPQL 이용
+		나. Query method 이용 ( 사용자가 직접 메서드를 구현하는 방식 )
+		  - 반드시 규칙에 맞는 메서드명을 지정해야 된다.
+		  https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html
+
+
+/////////////////////////////////////////////////////////////////////////////////
+4. 외부파일이용해서 데이터 저장하기 ( data.sql 만 사용한 경우 )
+
+   1) 작업순서
+
+    가. @Entity 로 지정한 엔티티 작성
+
+      => 실행결과는 엔티티에 해당되는 테이블이 작성됨.
+       =>  @Entity로 테이블생성 기능 활성화
+
+      spring.jpa.hibernate.ddl-auto=create
+
+    나. src/main/resources/data.sql 작성
+
+       - 반드시 data.sql 파일명임.
+       - 이 파일에 테이블에 저장할 insert 문 작성
+
+	# data.sql
+        insert into member(id, name) values (1000,'홍길동');
+	insert into member(id, name) values (1001,'이순신');
+	insert into member(id, name) values (1002,'유관순');
+	commit;
+
+    다. data.sql 실행 활성화 작업
+
+       # @Entity 보다 먼저 data.sql이 실행되기 때문에 defer 시킴.
+       spring.jpa.defer-datasource-initialization=true
+
+       # always는 프로그램실행시 매번 실행.
+       spring.sql.init.mode=always|never
+     
+/////////////////////////////////////////////////////////////////////////////////
+
+5. 외부파일이용해서 테이블생성 및 데이터 저장하기  ( schema.sql 과 data.sql 모두 사용한 경우 )
+
+   1) 작업순서
+
+    가. @Entity 로 지정한 엔티티 작성
+
+      =>  @Entity로 테이블생성 기능 비활성화
+
+      spring.jpa.hibernate.ddl-auto=none
+
+    나. src/main/resources/schema.sql 작성 
+       src/main/resources/data.sql 작성 
+
+       - 반드시 schema.sql 과 data.sql 파일명임.
+       - 이 파일에 테이블에 저장할 insert 문 작성
+	
+	# schema.sql
+	drop table if exists member;
+	create table member
+	( id bigint primary key auto_increment,
+	  name varchar(255)
+	);
+
+	# data.sql
+        insert into member(id, name) values (1000,'홍길동');
+	insert into member(id, name) values (1001,'이순신');
+	insert into member(id, name) values (1002,'유관순');
+	commit;
+
+    다. schema.sql 과  data.sql 실행 활성화 작업
+
+       spring.jpa.hibernate.ddl-auto=none
+       # @Entity 보다 먼저 data.sql이 실행되기 때문에 defer 시킴.
+       spring.jpa.defer-datasource-initialization=true
+       # always는 프로그램실행시 매번 실행.
+       spring.sql.init.mode=always
+/////////////////////////////////////////////////////////////////////////////////     
+
+6. 외부파일이용해서 테이블생성 및 데이터 저장하기 ( 저장위치 및 파일명 마음대로 )
+
+    1) src/main/resouces/sql 폴더에 저장
+
+         table.sql
+	 insert.sql
+
+    2) 경로 설정
+	
+	# classpath는 기본적으로 *.class 파일이 있는 경로 의미하고
+	  기본적으로 src/main/java 와 src/main/resource는 알고 있음.
+
+       spring.sql.init.schema-locations=classpath*:sql/table.sql
+       spring.sql.init.data-locations=classpath*:sql/insert.sql
+
+
+//////////////////////////////////////////////////////////////////////////
+
+7. 변수(필드)와 컬럼 맵핑
+
+   - @Column(옵션)
+   - 옵션기능 컬럼명지정, null허용여부, String인 경우 length 등 지정가능.
+
+   예> 
+       @Column(name="username")
+       String name;
+
+  - enum 타입은 @Enumerated(EnumType.STRING)  // EnumType.ORDINAL(수치로 관리)
+
+  - 기본적으로 엔티티내의 모든 변수는 컬럼으로 만들어짐.
+    이때 컬럼으로 만드는 작업에서 제외시킬 수 있음.( @Transient 지정 )
+
+  - [주의할점]
+    
+    만약 변수명이 카멜표기법으로 되어있으면 자동으로 생성되는 컬럼명은 _(스네이크표기법)로 생성된다.
+    예> createDate       ---> create_date
+       lastModifiedDate  --> last_modified_date 
+
+    _(스네이크표기법) 자동방지 기능
+    spring.jpa.hibernate.naming.implicit-strategy=org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+    spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+////////////////////////////////////////////////////////////////////////////////////////////
+8. JPQL ( Jakarta Persistence Query Language )
+
+https://docs.jboss.org/hibernate/orm/7.0/querylanguage/html_single/Hibernate_Query_Language.html#basic-concepts
+
+  자바의 결과값 얻기: 1.6. Representing result sets in Java 참조
+
+  1) 개요
+   - DB의 테이블 대상이 아니고
+     JPA의 엔티티 대상으로 JPQL를 작성해야 된다. (************************)
+     나중에 실제 SQL문으로 변경된다.
+   - SELECT 문 지원
+   - INSERT/DELETE/UPDATE 문 지원 ( 벌크 연산 이라고 부름 )
+
+ 2) 특징
+
+   - Entity 명과 변수명은 대소문자 구별함. (************************)
+   - 일반 키워드는 구별안함 ( 예> SELECT, select, SElect 모두 가능 )
+   - from 절에 지정하는 대상은 table명이 아니고 엔티티명이다. ( 대소문자 구별함 )
+     별칭은 필수임.
+   - select절/where절에 사용하는 속성은 table의 컬럼명이 아니고 엔티티의 변수명이다. (대소문자 구별함)
+
+  3) 조회 방법
+
+  가. 조회1 - 엔티티 타입으로 전체 컬럼 반환하는 경우
+     예> SQL :  select * from todo;
+        JPQL:  select  t   from Todo as t
+
+  나. 조회2 - 엔티티내의 하나의 컬럼만 반환하는 경우
+     예> SQL :  select id from todo;
+        JPQL:  select t.id from Todo as t
+
+  다. 조회3 - 엔티티내의 2개이상 일부 컬럼만 반환하는 경우
+     예> SQL :  select id, description from todo;
+        JPQL:  select t.id, t.description from Todo as t
+
+  4) 연산자
+     예>
+     select t.id as id,  t.description as desc, case t.id when 10001L then 'ONE'
+				                         when 10002L then 'TWO'
+				                         else 'THREE'
+				               end as mesg
+     from Todo as t
+
+     예>
+      select t from Todo as t where t.id = 100
+      select t from Todo as t WHERE t.description  LIKE '%50%'
+      select t from Todo as t where t.id BETWEEN 100 AND 10002
+      select t from Todo as t  WHERE t.id  IN ( 10002, 10003 )
+      ..
+
+   5) 그룹함수
+     예>
+        select m.team as team, 
+	       count(m) as cnt, 
+	       max(m.id) as max, 
+	       min(m.id) as min,
+	       sum(m.id) as sum
+	 from Member as m
+	 group by m.team
+         having count(m) >= 2
+  
+     6) 조인( INNER, OUTER )
+      
+       예>
+         select
+	     from Member as m 
+	     JOIN Locker as x
+	     ON m.locker = x
+
+    7) 서브쿼리
+      
+      예>
+         select t
+	  from Team as t
+	  where t IN ( select m.team   from Member as m where length(m.username)=4)
+
+    
+    8) Todo 엔티티 + JPQL 적용
+
+
+        //JPQL
+	//1. 조회1: 엔티티로 반환
+	@Query("select t from Todo as t")
+	List<Todo> findAllTodoList();
+
+	@Query("select t from Todo as t where t.id = ?1")
+	Todo findByIdTodo(Long id);
+	
+	//1. 조회2: 값 하나로 반환
+	@Query("select t.description from Todo as t")
+	List<String> findAllDescription();
+	
+	
+	//1. 조회3: 값 두개이상 반환
+	@Query("select t.id as id,  t.description as desc from Todo as t")
+	List<Map> findAllIdAndDescripion();
+
+////////////////////////////////////////////////////////////////////////////////////////////
+ 9. Query Methods
+
+    https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html 반드시 참조해서 사용
+
+	
+public interface EmpRepository extends JpaRepository<Emp, Long> {
+
+	//1. Query Method
+	
+	//가. ename으로 검색
+	List<Emp> findByEname(String ename);
+	
+	
+	//나. ename 또는 sal 로 검색
+	List<Emp> findByEnameOrSal(String ename, Long sal);
+	
+	//다.지정된 sal보다 작은 사원 검색
+	List<Emp> findBySalLessThan(Long sal);
+	
+	//라. ename중에서  A 글자를 포함하는 사원 검색
+	List<Emp> findByEnameContaining(String ename);
+	
+	
+	//마. comm 이 null 값을 가진 사원 검색
+	List<Emp> findByCommIsNull();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+10. Pageable
+
+     1) 개념
+      JPA에서 페이징 기능을 구현하려면, Pageable 인터페이스를 사용함. 
+      Pageable을 JpaRepository 메서드에 파라미터로 전달하면 JPA가 자동으로 페이징 처리를 수행함.
+      PageRequest는 Pageable의 구현체 중 하나로, 페이지 번호, 페이지당 항목 수, 정렬 정보 등을 
+      설정하여 페이지 정보를 생성함. 컨트롤러에서 Pageable을 직접 인자로 설정하는 것도 가능함.
+     
+      예> 게시글 조회시 정렬기준(최신순, 좋아요순) 및 정렬방식( 오름차순, 내림차순 )
+                      
+
+     2) Pageable 인터페이스
+       
+        getPageNumber() : 현재 페이지 번호를 반환(0부터 시작)
+	getPageSize() : 한 페이지당 최대 항목 수를 반환
+	getOffset() : 현재 페이지의 시작 위치를 반환
+	getSort() : 정렬 정보를 반환
+	next() : 다음 페이지 정보를 반환
+	previous() : 이전 페이지 정보를 반환
+
+        Pageable 을 이용해서 페이지 번호, 페이지당 항목 수, 필요에 따라 정렬 정보를 추가로 지정할 수 있다. (***************)
+        Pageable 로 지정한 정보들을 가지고 Page 객체를 반환할 수 있고, Page 객체는 조회된 데이터와 페이지 정보를 함께 갖게 된다.
+	
+	예> 
+	 // http://localhost:8090/app/emp?page=0&size=5&sort=empno,asc
+	   @GetMapping("/emp")
+	    public Page<Emp> getAllEmp(Pageable pageable) {
+		return service.getAllEmployees(pageable);
+	    }
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+10. 엔티티간 연관관계 맵핑
+https://docs.jboss.org/hibernate/orm/7.0/introduction/html_single/Hibernate_Introduction.html#introduction  3.16. Associations
+
+  1) 개요
+    - DB의 테이블은 fk 이용해서 연관관계를 맺음.
+      JPA의 엔티티는 참조변수(reference variable) 연관관계를 맺음.
+
+     예>
+        DB:
+	     member                                          locker
+	   -------                                      ----------------
+	   member_id  username    locker_id (fk)           locker_id    name
+	    20001      Ranga        40001                    40001    E123456
+	    20002      Adam         40002                    40002    N123457
+	    20003      Jane         40003                    40003    L123890
+	                                                     40004    A123890
+			 
+
+	
+	JPA: 단방향
+	   @Entity                                 @Entity
+	   Member                                 Locker
+	    Long id;                                Long id;
+	    String username;                        String name;  
+	    Locker locker; //Locker 참조                           
+	                                    
+                                               
+	    
+
+       JPA: 양방향 ( 개발자의 편의 목적임, DB 입장에서 변경된 사항은 없음 )
+	   @Entity                                 @Entity
+	   Member                                 Locker
+	    Long id;                                Long id;
+	    String username;                        String name;  
+	    Locker locker; //Locker 참조             Member member;  //Member 참조
+	                                    
+
+  2) 방향(direction)
+
+     - 단반향 ( unidirectional ) 
+     - 양방향 ( bidirectional ): 순수하게 개발자 편의 목적임.
+
+
+  3) 다중성(multiplicity)
+
+     - 일대일 ( @OneToOne ) 
+        예> member와 locker
+
+     - 다대일 ( @ManyToOne )
+        예> member와 team
+
+ 4) fetch 정책
+  
+   - DB에서 조회할때 연관된 데이터까지 포함해서 미리 가져오냐 아니면 필요할때 가져오냐 결정.
+   - EAGER: 기본, 미리 연관된 데이터까지 가져옴.
+     LAZY:  필요한 시점에 가져옴. (권장)
+
+ 5) 실습1 - 일대일 단방향
+
+    -- Member.java
+       @Entity
+	public class Member {
+
+		@Id // pk 역할
+		@Column(name = "member_id")
+		Long id;
+		
+		String username;
+
+		@OneToOne(fetch = FetchType.LAZY)  // console에 mebmer 테이블만 조회됨
+		//@OneToOne(fetch = FetchType.EAGER)  // console에 mebmer 테이블 및 locker 테이블도 조회됨
+		@JoinColumn(name="locker_id")
+		Locker locker;
+	}
+
+   -- Locker.java
+
+		@Entity
+		public class Locker {
+
+			@Id // pk 역할
+			@Column(name = "locker_id")
+			Long id;
+			
+			String name;
+
+		}
+
+  
+
+
+ 5) 실습2 - 일대일 양방향
+
+     # Member.java 변경사항 없음.
+
+     # Locker.java 수정
+
+        @Entity
+	public class Locker {
+
+		@Id // pk 역할
+		@Column(name = "locker_id")
+		Long id;
+		
+		String name;
+
+		//양방향( DB 코드 변경없음. 단지 자바에서 편의성 목적)
+		@OneToOne(mappedBy = "locker") // Member에 있는 Locker이 변수명 지정.
+		Member member;
+	}
+
+  ==> 양방향에서는 toString()는 사용하지 않음을 권장한다. ( 무한루프 발생 가능성 있음)
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ 6) 실습1 - 다대일 단방향
+
+     # Member.java
+
+      @Entity
+	public class Member {
+
+		@Id // pk 역할
+		@Column(name = "member_id")
+		Long id;
+		
+		String username;
+
+		@ManyToOne(fetch = FetchType.EAGER)
+		@JoinColumn(name="team_id")
+		Team team;         // List<Team> 이 아님
+	}
+
+     # Team.java
+  
+       @Entity
+public class Team {
+
+	@Id // pk 역할
+	@Column(name = "team_id")
+	Long id;
+	
+	String name;
+	String location;
+
+}
+
+ 	
+
+6) 실습2 - 다대일 양방향
+
+   # Manager.java 는 변경사항 없음.
+   
+   # Team.java
+
+      @Entity
+public class Team {
+
+	@Id // pk 역할
+	@Column(name = "team_id")
+	Long id;
+	
+	String name;
+	String location;
+	
+	//양방향
+	//@OneToMany(mappedBy = "team" )
+	@OneToMany(mappedBy = "team", cascade = CascadeType.REMOVE) // Team 삭제시 해당 Team에 속한 Member도 삭제됨.
+	List<Member> members;
+
+}
+
+
+==> 양방향에서는 toString()는 사용하지 않음을 권장한다. ( 무한루프 발생 가능성 있음)
+
+    예>
+       Member            Team
+
+       Team t;           Member m;    toString(){ id+name+m}
+
+      toString(){
+       return id + username + t;
+ 
+    
+////////////////////////////////////////////////////////////////////////
+
+11. 엔티티 생성시간과 수정시간을 자동으로 저장하는 기능
+
+    - 생성시간:   @CreationTimestamp
+	       @Column(updatable = false)
+	       LocalDateTime createDate;  // 저장할 때만 자동저장하고 수정할때는 저장하면 안됨.
+
+    - 수정시간: @UpdateTimestamp
+	     @Column(insertable = false)
+	     LocalDateTime updateDate; // 저장할 때만 자동 저장안하고 수정할때만 저장하면 됨.
+
+
+19.  상속지원
+
+   1) 상속전
+
+     @Entity
+      Student
+       @Id
+       Long id;
+       Strign name;
+       String address;
+
+
+     @Entity
+     Teacher
+        @Id
+       Long id;
+       String name;
+       String email;
+
+
+    ==> 모든 엔티티에 id와 name이 중복됨.
+
+
+    2) 상속
+
+      //상위클래스( @Entity지정안함. 직접 사용안함 )
+
+      @MappedSuperclass
+      public abstract class BaseEntity{
+	   @Id
+           Long id;
+           String name;
+      }
+
+      @Entity
+      Student extends BaseEntity{}
+
+      @Entity
+      Teacher extends BaseEntity{}
+
+//////////////////////////////////////////////////////////////////////////////

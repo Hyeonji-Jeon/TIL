@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy package &apos;com.exam.exception&apos; to &apos;JPA12_SpringDataJPA02_Emp_Query_methods/src/main/java&apos;&#x0D;&#x0A;- Original project: &apos;boot11_REST04_DB연동3_404응답처리개선&apos;&#x0D;&#x0A;- Destination element: &apos;JPA12_SpringDataJPA02_Emp_Query_methods/src/main/java&apos;&#x0D;&#x0A;- Original element: &apos;boot11_REST04_DB연동3_404응답처리개선/src/main/java/com.exam.exception&apos;" description="Copy package" destination="=JPA12_SpringDataJPA02_Emp_Query_methods/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/" element1="/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.exam.exception" flags="589830" fragments="1" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyPackages" stamp="1746145802232" version="1.0"/>
+</session>

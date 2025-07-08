@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/cakequake
+    driver-class-name: org.postgresql.Driver
+    username: cakeuser
+    password: 12345678
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 2000
+
+  jasypt:
+    encryptor:
+      password: ${JASYPT_ENCRYPTOR_PASSWORD}  # 환경 변수로부터 읽음
+
+    pg:
+      kakao:
+        base-url: https://kapi.kakao.com
+        admin-key: ${KAKAO_ADMIN_KEY}   # 환경 변수에서 읽어오는 카카오 Admin Key
+        cid: ${KAKAO_CID}         # 환경 변수에서 읽어오는 카카오 CID
+      toss:
+        base-url: https://api.tosspayments.com
+        secret-key: ${TOSS_SECRET_KEY}   # 환경 변수에서 읽어오는 토스페이 Secret Key
+
+    app:
+      base-url: ${APP_BASE_URL}        # our-service(ngrok 혹은 실제 도메인)
+
+external:
+  biz-api:
+    service-key: JLtcdkdYjMP4cJTOnhQMbk86z2emei4F3Fot7Awo2sJrQeaviOvc2gRZ1sM3cLjq5imWBde8LUeT/sInjgjSsg==
+
+jwt:
+  secret: aeYmwWvM20eUO1v2yqx7W+x0Iqom0+ViZLZAlIGGbFoNiANdDB8aDhdQ/OqGrRo7koLkVbCn0UwJCFWEu3QtAzA==
