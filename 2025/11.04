@@ -1,2 +1,34 @@
+** 컴포넌트 틀 -> quasar components 참고 **
+
 실행 명령어
 : npm run serve
+
+구조
+<template>
+  <h1> HTML 코드 작성하는 곳 </h1>
+    <div>
+      <h3 class="bg-yellow" :style="textRed"> {{ title }} </h3>           // 데이터 불러옴      // :속성명 = "데이터"
+    </div>
+    <p v-for="(item, i) in foods" :key="i">{{ item }}</p>                 // 반복문  v-for="(item, index) in 데이터"    ( key값 필요 )
+</template>
+
+<script>
+  export default {
+    name: '컴포넌트명',
+    data() {
+      return {
+         title: "데이터 작성하는 곳",
+         textRed: "color: red",
+         foods: ["김밥", "순대", "만두"],
+      }
+    }
+</script>
+
+<style>
+  .bg-yellow {
+    background: gold;
+    padding: 10px;
+</style>
+
+----------------------------------------------------------------------
+
