@@ -43,6 +43,26 @@ hh:mm:ss A    --    04:01:20 PM
 
       font-family: 폰트명;
 
+===========================================================================================================================================================================
 
+## js-circle-progress 사용법
+
+1. npm install --save js-circle-progress  실행
+
+2. import 'js-circle-progress';
+
+3. template에 추가 가능.
+                <circle-progress
+                  :max=""                  // max 값
+                  :value=""                // value 값
+                  text-format=""           // 표기 유형 선택
+                ></circle-progress>
+
+
+*** 표기 유형 ****
+
+valueOnCircle            :            그래프 가운데 max값, 그래프가 찬 부분에 value값이 표기됨
+none                     :            아무것도 표기 안됨
+percent                  :            그래프 가운데 value값 + % 가 표기됨.
 
 
