@@ -1,0 +1,44 @@
+## HTML 속성
+
+
+
+
+
+
+
+
+
+
+
+
+
+## CSS Utility Classes
+
+flex 
+:  Flexbox 레이아웃
+->  display: flex
+
+justify-center
+:  Flex의 가로 정렬 중심
+->  justify-content: center
+
+inherit  
+: 부모 요소의 값을 그대로 물려받겠다
+->  parent {
+      height: 200px;
+    }
+    
+    .child {
+      height: inherit;
+    }
+
+vh
+:  Viewport Height.    현재 화면 높이를 기준으로 퍼센트처럼 계싼하는 단위
+->  100vh  ---  화면 전체를 차지함
+->  50vh   ---  화면의 절반을 차지함
+
+translate(x,y)    or    translate3d(x,y,z)
+:  요소를 이동시키는 함수
+
+
+
