@@ -155,9 +155,41 @@ dark   :    다크모드
 
 
 
+==========================================================================================================================================================================================================================
+## store api
 
 
+1. etcStore에 변수 선언
 
+  const wass_status = ref(undefined);
+
+
+2. api 선언
+
+  const getWassStatus = async () => {
+
+    let ret = await api.get("/api/rdcs/center/v1/props/etc/status");
+    if(ret?.status == 200 && ret?.data?.data?.wass_status){
+        wass_status.value = ret.data.data.wass_status.status;
+    }
+
+
+3. return에 추가
+
+  return { wass_status, getWassStatus }
+
+
+4. 사용할 페이지로 이동 후 return 값 가져오기
+
+  const mapStore = etcStore();
+
+  onBeforeMount(async () => {
+
+    await mapStore.getWassStatus();
+    console.log(mapStore.wass_status);      // 콘솔에 true or false 뜸
+
+  }
+    
 
 
 
