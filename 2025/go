@@ -1,0 +1,184 @@
+## start go
+
+1. https://go.dev/    에서 go 설치
+
+2. 폴더 생성 후 파일 생성
+
+    파일명.go 생성
+
+3. 파일을 실행하기 위해서는 모둘 설치 필요
+
+  실행할 파일이 있는 폴더로 이동 후
+  go mod init 모둘명 입력     ---    모둘명은 폴더 경로로 지정하는 것이 좋음.   ex) goprojects/hello
+
+4. 모둘 설치했으면 
+
+    go build 입력
+
+5. 파일을 실행하려면
+
+  go run 파일명.go     or    ./파일명.exe     입력
+
+
+========================================================================================================================================================================
+
+## go의 기초
+
+package main              //  시작은 항상 package로 시작
+
+import "fmt"              //  fmt : package 중 하니
+
+func main() {             //  func : function의 약자
+	fmt.Println("Hello Go World")
+}
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+변수
+
+package main
+
+import "fmt"
+
+func main() {
+	var a int = 3
+	var b int            // int의 기본값은 0
+	var c = 4
+	d := 5
+	var e = "Hello"
+	f := 3.14
+
+	fmt.Println(a, b, c, d, e, f)
+}
+
+
+출력 -> 3 0 4 5 Hello 3.14
+
+
+
+
+** 연산의 각 항목의 타입은 같아야 한다.
+
+func main() {
+	a := 3                 // int - 64 bit = int64
+	var b float64 = 3.5
+
+	var c int = int(b)     // 3.5 -> 3
+	d := float64(a) * b
+
+	var e int64 = 7
+	f := a * int(e)        // int와 int64는 다른 타입임
+
+	fmt.Println(a, b, c, d, e, f)
+}
+
+
+출력 -> 3 3.5 3 10.5 7 21
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+입출력
+
+package main
+
+import (                                  // 여러개 임포트 할 때는 괄호로 묶어서
+	"bufio"
+	"fmt"
+	"os"
+)
+
+func main() {
+	stdin := bufio.NewReader(os.Stdin)      // 입력을 buffer로 감싸 빠른 Reader를 만들어 주는 코드.
+                                          //  ->  입력을 줄 단위·문자 단위로 쉽게 읽고 남은 입력을 비울 때 유용함
+	var a int
+	var b int
+
+	n, err := fmt.Scanln(&a, &b)
+	if err != nil {                         // nil    =>    undefined, null 이런느낌
+		fmt.Println(err)
+		stdin.ReadString('\n')                // 잘못된 입력이 들어오면 그 줄을 통째로 clean 
+	} else {
+		fmt.Println(n, a, b)                  // n이 2로 출력되는 이유는 a, b 총 두 개의 값이 정상적으로 입력되었기 때문
+	}
+
+	n, err = fmt.Scanln(&a, &b)
+	if err != nil {
+		fmt.Println(err)
+		stdin.ReadString('\n')
+	} else {
+		fmt.Println(a, b)
+	}
+}
+
+========================================================================================================================================================================
+
+## go + vue 로 todo 실습
+
+1. dto 생성
+
+package main
+
+type (
+	TodoRequest struct {                  // *** 대소문자 주의 ***
+		Title   *string `json:"title"`
+		Name    *string `json:"name"`
+		Content *string `json:"content"`
+		DueDate *string `json:"dueDate"`
+		Done    *bool   `json:"done"`
+	}
+
+	TodoResponse struct {
+		ID         *int    `json:"id"`
+		Title      *string `json:"title"`
+		Name       *string `json:"name"`
+		Content    *string `json:"content"`
+		DueDate    *string `json:"dueDate"`
+		Done       *bool   `json:"done"`
+		CreateDate *string `json:"createDate"`
+	}
+)
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+2. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
