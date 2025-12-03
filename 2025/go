@@ -119,6 +119,17 @@ func main() {
 
 append		:	새로운 요소가 추가된 새 슬라이드를 반환
 
+* append로 삭제 기능 구현하기
+
+slice = append(slice[:i], slice[i+1:]...)		---		삭제할 요소의 인덱스 => i, 	---		:i =>  i의 앞 요소들		i+1:  =>  i의 뒷 요소들			
+->	삭제할 요소의 앞부분과 뒷부분을 이어붙임.
+ex) todos[1, 2, 3, 4, 5 ] 에서  3을 삭제한다면,
+	i = 2 니까, 
+	todos [:2]  	==		[1, 2]
+	todos [3:]		==		[4, 5]
+	append(todos[:w], todos[3:]...)		==		[1, 2, 4, 5]
+
+
 for ... range 	:	반복문. 	---	항상 두 개의 값을 반환한다	(인덱스, 값)
 
 _		:	무시
@@ -157,18 +168,28 @@ func Save()
 func FindAll()
 func FindByID()
 func Update()
+func Delete()
 
 3. service 생성
 
 TodoService struct
 func NewTodoService()
 
-func AddTodo ()
+func AddTodo()
 func TodoList()
 func TodoDetail()
 func UpdateTodo()
+func DeleteTodo()
 
 4. handler 생성
+
+func AddTodo()
+func TodoList()
+func TodoDetail()
+func UpdateTodo()
+func DeleteTodo()
+
+5. main.go
 
 
 
