@@ -147,6 +147,11 @@ func main() {
 
 &(앰퍼샌드) 	:	포인터 주소를 반환하라는 의미
 
+a := 10		:	a의 값은 10								a  출력 ->	10
+&a			:	a의 주소를 가져와라						&a 출력 ->	0xc000018058
+p := &a		:	p는 a의 주소를 가진 포인터				p  출력 ->	0xc000018058
+*p			:	그 주소로 가서 실제 값을 가져와라			*p 출력 ->	10
+
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 append		:	새로운 요소가 추가된 새 슬라이드를 반환
@@ -299,8 +304,99 @@ copy(target, source)		:		앞에서부터 source의 요소를 target에 덮어쓴
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+인터페이스
 
+package main
 
+import (
+	"fmt"
+	"math"
+)
+
+type Shape interface {				// 타입 상관없이 바로 사용가
+	area() float64
+	perimeter() float64
+}
+
+type Rect struct {
+	width, height float64
+}
+type Circle struct {
+	radius float64
+}
+
+func (r Rect) area() float64 {
+	return r.width * r.height
+}
+func (r Rect) perimeter() float64 {
+	return 2 * (r.width + r.height)
+}
+
+func (c Circle) area() float64 {
+	return math.Pi * c.radius * c.radius
+}
+func (c Circle) perimeter() float64 {
+	return 2 * math.Pi * c.radius
+}
+
+func main() {
+	r := Rect{10, 20}
+	c := Circle{10}
+
+	showArea(r, c)
+}
+
+func showArea(shapes ...Shape) {
+	for _, s := range shapes {
+		a := s.area()
+		fmt.Println(a)
+	}
+}
+
+인터페이스 없으면 타입 하나 늘 때마다 함수가 갈아엎어짐.
+인터페이스를 쓰면 '동작(area)'만 맞추면 자동으로 확장됨.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+fmt → 화면 출력/문자열 처리					ex)		fmt.Println("hello")
+math → 수학 관련								ex)		math.Sqrt(9)  // 제곱근  -> 3,      math.Pi	 // 상수
+time → 시간 관련								ex)		time.Now()
+os → 파일·폴더·환경변수 등 운영체제 기능		ex)		os.Open("test.txt")
+log → 콘솔에 로그 출력						ex)		log.Fatal("error")
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+defer 		:		함수가 끝나기 직전에 실행해라									---		무조건 마지막에 실행됨
+panic		:		함수를 즉시 종료시키는 에러									---		panic이 발생하면 그 함수는 즉시 종료되고, 호출한 함수로 전파됨
+recover		:		panic 상태를 제거하고 다음 문장을 호출							---		defer 안에서만 동작
+
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+	println("start")
+	openFile("Invalid.txt")
+
+	println("Done")
+}
+
+func openFile(fn string) {
+	defer func() {
+		if r := recover(); r != nil {				// r  	:	 panic이 보낸 err
+			fmt.Println("OPEN ERROR", r)
+		}
+	}()
+
+	f, err := os.Open(fn)
+	if err != nil {
+		panic(err)									// 여기에 전달된 err가 recover()에 들어감
+	}
+	defer f.Close()
+}
 
 
 
