@@ -28,4 +28,14 @@ $ git push origin master // 원격 저장소의 커밋을 지역 저장소로 �
 $ git clone 원격저장소 주소 // 원격 저장소 복제하기
 $ git remote remove origin // 원격저장소 삭제(끊기)
 
+==================================================================================================================
+
+GitLab에서 프로젝트 안에
+
+Code   ->    Visual Studio Code (HTTPS) 선택   ->    원하는 위치 선택
+
+터미널 창      
+git branch  :   현재 브랜치 확인
+git branch -r  :  모든 브랜치 확인
+git checkout 브랜치   :  브랜치로 이동
 
