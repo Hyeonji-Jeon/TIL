@@ -50,7 +50,7 @@
   
  ## DB, SQL
  
-* DBeaver + Eclipse
+* DBeaver - mariaDB
   - [02.03](./2월/02.03)  --  DB 생성, table 생성, 데이터 조작 연습(INSERT, SELECT, UPDATE, DELETE)   --  todolist 조회 -> todoadd 처리 -> (등록이 완료되었어요)경고창 -> todolist 조회
   - [02.04](./2월/02.04)  --  재귀복사 --  request.getParameter()로 입력값 가져오기. UTF-8 인코딩으로 한글 변환
   - [02.05](./2월/02.05)  --  limit 숫자1 OFFSET 숫자2, 페이징 처리
